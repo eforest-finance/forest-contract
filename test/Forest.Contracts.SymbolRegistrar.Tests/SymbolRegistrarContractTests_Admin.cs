@@ -95,6 +95,8 @@ namespace Forest.Contracts.SymbolRegistrar
             var result = await AdminSymbolRegistrarContractStub.Initialize.SendAsync(new InitializeInput()
             {
                 ReceivingAccount = Admin.Address,
+                AuctionContractAddress = Admin.Address,
+                ProxyAccountAddress = Admin.Address,
                 SpecialSeeds = new SpecialSeedList
                 {
                     Value = { _specialUsd, _specialEth }

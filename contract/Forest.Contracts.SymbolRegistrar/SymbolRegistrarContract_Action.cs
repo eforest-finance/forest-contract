@@ -40,11 +40,7 @@ namespace Forest.Contracts.SymbolRegistrar
                 Amount = price.Amount,
             });
 
-            IssueSeed(new IssueSeedInput()
-            {
-                Symbol = input.Symbol,
-                To = issueTo
-            });
+            IssueSeed(issueTo, input.Symbol);
 
             Context.Fire(new Bought()
             {
