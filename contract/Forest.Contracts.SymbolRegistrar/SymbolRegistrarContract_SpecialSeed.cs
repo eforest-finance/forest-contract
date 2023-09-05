@@ -16,7 +16,8 @@ namespace Forest.Contracts.SymbolRegistrar
         public override Empty AddSpecialSeeds(SpecialSeedList input)
         {
             if (State.Initialized.Value)
-                Assert(GetDefaultParliamentController().OwnerAddress == Context.Sender, "No permission.");
+                Assert(State.Admin.Value == Context.Sender // TODO support admin for test temp
+                       || GetDefaultParliamentController().OwnerAddress == Context.Sender, "No permission.");
             else
                 AssertContractAuthor();
 
