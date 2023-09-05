@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using AElf.Sdk.CSharp;
 using Google.Protobuf.WellKnownTypes;
 
-namespace Forest.SymbolRegistrar
+namespace Forest.Contracts.SymbolRegistrar
 {
     /// <summary>
     /// The C# implementation of the contract defined in symbol_registrar_contract.proto that is located in the "protobuf"

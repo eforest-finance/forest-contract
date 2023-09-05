@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AElf.Contracts.MultiToken;
 using AElf.Kernel.Token;
 using AElf.Types;
+using Forest.Contracts.SymbolRegistrar;
 using Shouldly;
 using Xunit;
 

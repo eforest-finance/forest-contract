@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AElf.Contracts.MultiToken;
 using AElf.Contracts.ProxyAccountContract;
 using AElf.Types;
+using Forest.Contracts.SymbolRegistrar;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Shouldly;

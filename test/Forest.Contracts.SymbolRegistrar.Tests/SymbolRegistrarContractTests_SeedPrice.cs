@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Forest.Contracts.SymbolRegistrar;
 using Google.Protobuf.WellKnownTypes;
 using Shouldly;
 using Xunit;
