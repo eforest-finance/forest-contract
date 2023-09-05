@@ -12,7 +12,6 @@ using AElf.Kernel;
 using AElf.Standards.ACS0;
 using AElf.Standards.ACS3;
 using AElf.Types;
-using Forest.SymbolRegistrar;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Shouldly;
