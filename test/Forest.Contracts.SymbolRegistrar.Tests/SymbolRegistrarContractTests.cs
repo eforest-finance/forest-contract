@@ -227,9 +227,18 @@ namespace Forest.Contracts.SymbolRegistrar
         internal SpecialSeed _specialInvalidNftSymbol = new()
         {
             SeedType = SeedType.Notable,
-            Symbol = "abc-abc",
+            Symbol = "ABC-abc",
             PriceSymbol = "ELF",
             PriceAmount = 1000_0000_0000,
+            IssueChain = "ETH",
+            ExternalInfo = { ["aaa"] = "bbb" }
+        };
+        internal SpecialSeed _specialInvalidPriceAmount = new()
+        {
+            SeedType = SeedType.Notable,
+            Symbol = "ABC",
+            PriceSymbol = "ELF",
+            PriceAmount = -1,
             IssueChain = "ETH",
             ExternalInfo = { ["aaa"] = "bbb" }
         };

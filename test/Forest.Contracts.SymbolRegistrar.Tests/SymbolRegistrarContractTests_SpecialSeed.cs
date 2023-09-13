@@ -36,6 +36,22 @@ namespace Forest.Contracts.SymbolRegistrar
             result.Message.ShouldContain("No permission");
         }
 
+
+
+        [Fact]
+        public async Task SetSpecialSeed_notExists_removeSuccess()
+        {
+            await SetSpecialSeed_byProposal();
+            
+            var removeResult = await SubmitAndApproveProposalOfDefaultParliament(SymbolRegistrarContractAddress,
+                "RemoveSpecialSeeds", new RemoveSpecialSeedInput
+                {
+                    Symbols = { _specialBtc.Symbol }
+                });
+            removeResult.TransactionResult.Status.ShouldBe(TransactionResultStatus.Mined);
+            removeResult.TransactionResult.Logs.Where(log => log.Name == nameof(SpecialSeedRemoved)).Count().ShouldBe(0);
+        }
+
         [Fact]
         public async Task SetSpecialSeed_removeSuccess()
         {
@@ -83,6 +99,39 @@ namespace Forest.Contracts.SymbolRegistrar
             seedBtc.Symbol.ShouldBe(_specialBtc.Symbol);
         }
 
+
+        [Fact]
+        public async Task SetSpecialSeed_remove_notInit_success()
+        {
+            var removeResult = await AdminSymbolRegistrarContractStub.RemoveSpecialSeeds.SendAsync(
+                new RemoveSpecialSeedInput
+                {
+                    Symbols = { _specialUsd.Symbol }
+                });
+            
+            removeResult.TransactionResult.Status.ShouldBe(TransactionResultStatus.Mined);
+        }
+
+
+        [Fact]
+        public async Task SetSpecialSeed_remove_noPermission()
+        {
+            var removeResult = await Assert.ThrowsAsync<Exception>(() => User1SymbolRegistrarContractStub.RemoveSpecialSeeds.SendAsync(
+                new RemoveSpecialSeedInput
+                {
+                    Symbols = { _specialUsd.Symbol }
+                }));
+            removeResult.Message.ShouldContain("No permission");
+            
+            await InitializeContract();
+            var adminResult = await Assert.ThrowsAsync<Exception>(() => AdminSymbolRegistrarContractStub.RemoveSpecialSeeds.SendAsync(
+                new RemoveSpecialSeedInput
+                {
+                    Symbols = { _specialUsd.Symbol }
+                }));
+            
+            adminResult.Message.ShouldContain("No permission");
+        }
 
         [Fact]
         public async Task SetSpecialSeed_fail()
@@ -134,6 +183,16 @@ namespace Forest.Contracts.SymbolRegistrar
                 })
             );
             invalidNftSymbol.Message.ShouldContain("Invalid nft symbol");
+
+
+            // invalid NFT symbol
+            var invalidPriceAmount = await Assert.ThrowsAsync<Exception>(() =>
+                SubmitAndApproveProposalOfDefaultParliament(SymbolRegistrarContractAddress, "AddSpecialSeeds", new SpecialSeedList
+                {
+                    Value = { _specialUsd, _specialInvalidPriceAmount }
+                })
+            );
+            invalidPriceAmount.Message.ShouldContain("Invalid price amount");
 
 
             // Invalid issue chain contract

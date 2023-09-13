@@ -26,6 +26,7 @@ namespace Forest.Contracts.SymbolRegistrar
             for (var index = 0; index < input?.Value?.Count; index++)
             {
                 var item = input.Value[index];
+                Assert(item.PriceAmount > 0, "Invalid price amount");
                 AssertSymbolPattern(item.Symbol);
                 if (!priceSymbolExists.Contains(item.PriceSymbol))
                 {
@@ -55,7 +56,11 @@ namespace Forest.Contracts.SymbolRegistrar
 
         public override Empty RemoveSpecialSeeds(RemoveSpecialSeedInput input)
         {
-            Assert(GetDefaultParliamentController().OwnerAddress == Context.Sender, "No permission.");
+            
+            if (State.Initialized.Value)
+                Assert(GetDefaultParliamentController().OwnerAddress == Context.Sender, "No permission.");
+            else 
+                AssertContractAuthor();
 
             var exists = new HashSet<string>();
             var removedList = new SpecialSeedList();
@@ -71,10 +76,14 @@ namespace Forest.Contracts.SymbolRegistrar
                 State.SpecialSeedMap.Remove(symbol);
             }
 
-            Context.Fire(new SpecialSeedRemoved
+            if (removedList.Value.Count > 0)
             {
-                RemoveList = removedList
-            });
+                Context.Fire(new SpecialSeedRemoved
+                {
+                    RemoveList = removedList
+                });
+            }
+
             return new Empty();
         }
     }
