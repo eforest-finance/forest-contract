@@ -87,12 +87,12 @@ namespace Forest.Contracts.SymbolRegistrar
         }
 
 
-        internal async Task InitElfBalance(Address to)
+        internal async Task InitElfBalance(Address to, long amount = 10000_0000_0000)
         {
             await AdminTokenContractStub.Transfer.SendAsync(new TransferInput
             {
                 Symbol = "ELF",
-                Amount = 10000_0000_0000,
+                Amount = amount,
                 To = to
             });
             
@@ -115,7 +115,7 @@ namespace Forest.Contracts.SymbolRegistrar
             });
         }
 
-        internal async Task InitSeed()
+        internal async Task InitSeed0()
         {
             await AdminTokenContractStub.Create.SendAsync(
                 new CreateInput
