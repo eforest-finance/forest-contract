@@ -11,6 +11,30 @@ namespace Forest.Contracts.SymbolRegistrar
     public class SymbolRegistrarContractTests_SpecialSeed : SymbolRegistrarContractTests
     {
 
+        [Fact]
+        public async Task SetSpecialSeed_notInit_notAuthor_fail()
+        {
+            // create proposal and approve
+            var result = await Assert.ThrowsAsync<Exception>(() => SubmitAndApproveProposalOfDefaultParliament(SymbolRegistrarContractAddress,
+                "AddSpecialSeeds",
+                new SpecialSeedList
+                {
+                    Value = { _specialUsd, _specialEth }
+                }));
+            result.Message.ShouldContain("No permission");
+        }
+
+        [Fact]
+        public async Task SetSpecialSeed_notParliament_fail()
+        {
+            await InitializeContract();
+            
+            var result = await Assert.ThrowsAsync<Exception>(() => User1SymbolRegistrarContractStub.AddSpecialSeeds.SendAsync(new SpecialSeedList
+                {
+                    Value = { _specialUsd, _specialEth }
+                }));
+            result.Message.ShouldContain("No permission");
+        }
 
         [Fact]
         public async Task SetSpecialSeed_removeSuccess()
@@ -84,6 +108,34 @@ namespace Forest.Contracts.SymbolRegistrar
             invalidIssueChain.Message.ShouldContain("Invalid issue chain");
 
 
+            // long name
+            var invalidSymbolLength = await Assert.ThrowsAsync<Exception>(() =>
+                SubmitAndApproveProposalOfDefaultParliament(SymbolRegistrarContractAddress, "AddSpecialSeeds", new SpecialSeedList
+                {
+                    Value = { _specialUsd, _specialLongName }
+                })
+            );
+            invalidSymbolLength.Message.ShouldContain("Invalid symbol length");
+
+            // invalid symbol
+            var invalidSymbol = await Assert.ThrowsAsync<Exception>(() =>
+                SubmitAndApproveProposalOfDefaultParliament(SymbolRegistrarContractAddress, "AddSpecialSeeds", new SpecialSeedList
+                {
+                    Value = { _specialUsd, _specialInvalidSymbol }
+                })
+            );
+            invalidSymbol.Message.ShouldContain("Invalid symbol");
+
+            // invalid NFT symbol
+            var invalidNftSymbol = await Assert.ThrowsAsync<Exception>(() =>
+                SubmitAndApproveProposalOfDefaultParliament(SymbolRegistrarContractAddress, "AddSpecialSeeds", new SpecialSeedList
+                {
+                    Value = { _specialUsd, _specialInvalidNftSymbol }
+                })
+            );
+            invalidNftSymbol.Message.ShouldContain("Invalid nft symbol");
+
+
             // Invalid issue chain contract
             var invalidIssueChainContract = await Assert.ThrowsAsync<Exception>(() =>
                 SubmitAndApproveProposalOfDefaultParliament(SymbolRegistrarContractAddress, "AddSpecialSeeds", new SpecialSeedList
@@ -93,7 +145,7 @@ namespace Forest.Contracts.SymbolRegistrar
             );
             invalidIssueChainContract.Message.ShouldContain("Invalid issue chain contract");
 
-            // Invalid issue chain
+            // duplicate symbol
             var duplicateSymbol = await Assert.ThrowsAsync<Exception>(() =>
                 SubmitAndApproveProposalOfDefaultParliament(SymbolRegistrarContractAddress, "AddSpecialSeeds", new SpecialSeedList
                 {

@@ -26,6 +26,7 @@ namespace Forest.Contracts.SymbolRegistrar
             for (var index = 0; index < input?.Value?.Count; index++)
             {
                 var item = input.Value[index];
+                AssertSymbolPattern(item.Symbol);
                 if (!priceSymbolExists.Contains(item.PriceSymbol))
                 {
                     var tokenInfo = GetTokenInfo(item.PriceSymbol);

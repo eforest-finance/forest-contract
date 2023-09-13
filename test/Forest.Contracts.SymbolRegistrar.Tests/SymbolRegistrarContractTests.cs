@@ -203,5 +203,35 @@ namespace Forest.Contracts.SymbolRegistrar
             IssueChain = "ETH",
             ExternalInfo = { ["aaa"] = "bbb" }
         };
+        
+        internal SpecialSeed _specialLongName = new()
+        {
+            SeedType = SeedType.Notable,
+            Symbol = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDE",
+            PriceSymbol = "ELF",
+            PriceAmount = 1000_0000_0000,
+            IssueChain = "ETH",
+            ExternalInfo = { ["aaa"] = "bbb" }
+        };
+        
+        internal SpecialSeed _specialInvalidSymbol = new()
+        {
+            SeedType = SeedType.Notable,
+            Symbol = "abcabc",
+            PriceSymbol = "ELF",
+            PriceAmount = 1000_0000_0000,
+            IssueChain = "ETH",
+            ExternalInfo = { ["aaa"] = "bbb" }
+        };
+        
+        internal SpecialSeed _specialInvalidNftSymbol = new()
+        {
+            SeedType = SeedType.Notable,
+            Symbol = "abc-abc",
+            PriceSymbol = "ELF",
+            PriceAmount = 1000_0000_0000,
+            IssueChain = "ETH",
+            ExternalInfo = { ["aaa"] = "bbb" }
+        };
     }
 }
