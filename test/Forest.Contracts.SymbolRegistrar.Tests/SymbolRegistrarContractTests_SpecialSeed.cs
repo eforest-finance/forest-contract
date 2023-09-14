@@ -26,6 +26,41 @@ namespace Forest.Contracts.SymbolRegistrar
         }
 
         [Fact]
+        public async Task SetSpecialSeed_update_success()
+        {
+            await InitializeContract();
+
+            // create proposal and approve
+            var result = await SubmitAndApproveProposalOfDefaultParliament(SymbolRegistrarContractAddress,
+                "AddSpecialSeeds", new SpecialSeedList
+                {
+                    Value = { _specialUsd, _specialEth }
+                });
+            result.TransactionResult.Status.ShouldBe(TransactionResultStatus.Mined);
+
+            var usd = await User1SymbolRegistrarContractStub.GetSpecialSeed.CallAsync(new StringValue
+            {
+                Value = _specialUsd.Symbol
+            });
+            usd.ShouldNotBeNull();
+            usd.PriceAmount.ShouldBe(100_0000_0000);
+
+            _specialUsd.PriceAmount = 200_0000_0000;
+            result = await SubmitAndApproveProposalOfDefaultParliament(SymbolRegistrarContractAddress,
+                "AddSpecialSeeds", new SpecialSeedList
+                {
+                    Value = { _specialUsd, _specialEth }
+                });
+            result.TransactionResult.Status.ShouldBe(TransactionResultStatus.Mined);
+            usd = await User1SymbolRegistrarContractStub.GetSpecialSeed.CallAsync(new StringValue
+            {
+                Value = _specialUsd.Symbol
+            });
+            usd.ShouldNotBeNull();
+            usd.PriceAmount.ShouldBe(200_0000_0000);
+        }
+
+        [Fact]
         public async Task SetSpecialSeed_notParliament_fail()
         {
             await InitializeContract();
@@ -231,7 +266,7 @@ namespace Forest.Contracts.SymbolRegistrar
         public async Task AddSpecialSeed_maxLimitExceeded_fail()
         {
             await InitializeContract();
-            
+
             const int length = 600;
             var batchSpecialSeedList = new SpecialSeedList();
             for (var i = 0; i < length; i++)
@@ -239,6 +274,7 @@ namespace Forest.Contracts.SymbolRegistrar
                 batchSpecialSeedList.Value.Add(SpecialSeed(BaseEncodeHelper.Base26(i), SeedType.Unique, "ELF",
                     100_0000_0000));
             }
+
             var maxLimitExceeded = await Assert.ThrowsAsync<Exception>(() =>
                 SubmitAndApproveProposalOfDefaultParliament(SymbolRegistrarContractAddress, "AddSpecialSeeds",
                     batchSpecialSeedList)
