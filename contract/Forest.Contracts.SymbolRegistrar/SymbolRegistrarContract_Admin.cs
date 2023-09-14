@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AElf;
@@ -77,7 +78,15 @@ namespace Forest.Contracts.SymbolRegistrar
             State.LastSeedId.Value = input.Value;
             return new Empty();
         }
-    
+
+        public override Empty SetSeedImageUrlPrefix(StringValue input)
+        {
+            AssertAdmin();
+            Assert(input != null && !String.IsNullOrWhiteSpace(input.Value), "Invalid param");
+            State.SeedImageUrlPrefix.Value = input.Value;
+            return new Empty();
+        }
+
         public override Empty SetSeedsPrice(SeedsPriceInput input)
         {
             AssertAdmin();
