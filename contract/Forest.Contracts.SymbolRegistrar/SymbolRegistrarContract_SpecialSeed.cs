@@ -62,15 +62,10 @@ namespace Forest.Contracts.SymbolRegistrar
                 Assert(GetDefaultParliamentController().OwnerAddress == Context.Sender, "No permission.");
             else 
                 AssertContractAuthor();
-
-            var exists = new HashSet<string>();
+            
             var removedList = new SpecialSeedList();
-            for (var index = 0; index < input?.Symbols.Count; index++)
+            foreach (var symbol in input.Symbols)
             {
-                var symbol = input.Symbols[index];
-                Assert(!exists.Contains(symbol), "Duplicate symbol " + symbol);
-                exists.Add(symbol);
-
                 var itemData = State.SpecialSeedMap[symbol];
                 if (itemData == null) continue;
                 removedList.Value.Add(itemData);
