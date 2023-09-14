@@ -20,6 +20,7 @@ namespace Forest.Contracts.SymbolRegistrar
                        || GetDefaultParliamentController().OwnerAddress == Context.Sender, $"No permission.({GetDefaultParliamentController().OwnerAddress},{Context.Sender})");
             else
                 AssertContractAuthor();
+            Assert(input.Value.Count <= SymbolRegistrarContractConstants.MaxAddSpecialSeedCount, "Seed list max limit exceeded.");
 
             var priceSymbolExists = new HashSet<string> { SymbolRegistrarContractConstants.ELFSymbol };
             var exists = new HashSet<string>();

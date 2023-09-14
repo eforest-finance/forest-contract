@@ -147,6 +147,19 @@ namespace Forest.Contracts.SymbolRegistrar
             return priceList;
         }
 
+        internal SpecialSeed SpecialSeed(string symbol, SeedType seedType, string priceSymbol, long priceAmount)
+        {
+            return new SpecialSeed
+            {
+                SeedType = seedType,
+                Symbol = symbol,
+                PriceSymbol = priceSymbol,
+                PriceAmount = priceAmount,
+                AuctionType = AuctionType.English
+            };
+        }
+
+        
         internal SpecialSeed _specialUsd = new()
         {
             SeedType = SeedType.Unique,
