@@ -98,7 +98,7 @@ namespace Forest.Contracts.SymbolRegistrar
                 IssueTo = User1.Address
             }));
             res.ShouldNotBeNull();
-            res.Message.ShouldContain("Insufficient balance of ELF");
+            res.Message.ShouldContain("Insufficient allowance");
         }
 
 
