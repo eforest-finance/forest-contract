@@ -21,9 +21,6 @@
         <ContractReference Include="..\..\protobuf\symbol_registrar_contract.proto">
             <Link>Protobuf\Proto\symbol_registrar_contract.proto</Link>
         </ContractReference>
-        <ContractReference Include="..\..\protobuf\token_contract.proto">
-            <Link>Protobuf\Proto\token_contract.proto</Link>
-        </ContractReference>
     </ItemGroup>
     
     <ItemGroup>

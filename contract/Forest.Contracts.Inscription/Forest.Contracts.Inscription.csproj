@@ -22,14 +22,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ContractReference Include="..\..\protobuf\token_contract.proto">
-            <Link>Protobuf\Proto\reference\token_contract.proto</Link>
-        </ContractReference>
         <ContractReference Include="..\..\protobuf\acs0.proto">
             <Link>Protobuf\Proto\reference\acs0.proto</Link>
-        </ContractReference>
-        <ContractReference Include="..\..\protobuf\token_contract_impl.proto">
-            <Link>Protobuf\Proto\reference\token_contract_impl.proto</Link>
         </ContractReference>
         <ContractReference Include="..\..\protobuf\acs1.proto">
             <Link>Protobuf\Proto\reference\acs1.proto</Link>

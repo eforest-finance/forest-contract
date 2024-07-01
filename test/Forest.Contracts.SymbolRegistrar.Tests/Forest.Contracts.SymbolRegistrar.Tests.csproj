@@ -82,12 +82,6 @@
     <ContractStub Include="..\..\protobuf\symbol_registrar_contract.proto">
       <Link>Protobuf\Proto\symbol_registrar_contract.proto</Link>
     </ContractStub>
-    <ContractStub Include="..\..\protobuf\token_contract.proto">
-      <Link>Protobuf\Proto\token_contract.proto</Link>
-    </ContractStub>
-    <ContractStub Include="..\..\protobuf\token_contract_impl.proto">
-      <Link>Protobuf\Proto\token_contract_impl.proto</Link>
-    </ContractStub>
     <ContractStub Include="..\..\protobuf\association_contract.proto">
       <Link>Protobuf\Generated\Protobuf\Proto\association_contract.proto</Link>
     </ContractStub>
