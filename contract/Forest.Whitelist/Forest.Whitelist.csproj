@@ -35,4 +35,7 @@
             <Link>Protobuf\Proto\whitelist_contract.proto</Link>
         </ContractCode>
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Protobuf\Proto\reference\" />
+    </ItemGroup>
 </Project>

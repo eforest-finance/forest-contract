@@ -63,4 +63,8 @@
         <ProjectReference Include="..\..\src\AElf.Boilerplate.TestBase\AElf.Boilerplate.TestBase.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Protobuf\Proto\reference\" />
+    </ItemGroup>
+
 </Project>

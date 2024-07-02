@@ -140,9 +140,6 @@
         <ContractStub Include="..\..\protobuf\treasury_contract.proto">
             <Link>Protobuf\Proto\treasury_contract.proto</Link>
         </ContractStub>
-        <ContractStub Include="..\..\protobuf\token_converter_contract.proto">
-            <Link>Protobuf\Proto\token_converter_contract.proto</Link>
-        </ContractStub>
         <ContractStub Include="..\..\protobuf\economic_contract.proto">
             <Link>Protobuf\Proto\economic_contract.proto</Link>
         </ContractStub>

@@ -11,7 +11,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AElf.Contracts.MultiToken" Version="1.5.0" />
         <PackageReference Include="AElf.Contracts.Election" Version="1.5.0" />
         <PackageReference Include="AElf.Contracts.Consensus.AEDPoS" Version="1.5.0" />
         <PackageReference Include="AElf.EconomicSystem" Version="1.5.0" />
@@ -68,6 +67,12 @@
         <ContractStub Include="..\..\protobuf\whitelist_contract.proto">
             <Link>Protobuf\Proto\whitelist_contract.proto</Link>
         </ContractStub>
+        <ContractStub Include="..\..\protobuf\token_contract.proto">
+            <Link>Protobuf\Proto\token_contract.proto</Link>
+        </ContractStub>
+        <ContractStub Include="..\..\protobuf\token_contract_impl.proto">
+            <Link>Protobuf\Proto\token_contract_impl.proto</Link>
+        </ContractStub>
         <ContractBase Include="..\..\protobuf\acs0.proto">
             <Link>Protobuf\Proto\acs0.proto</Link>
         </ContractBase>
@@ -90,6 +95,10 @@
         <ProjectReference Include="..\..\contract\Forest.Whitelist\Forest.Whitelist.csproj" />
         <ProjectReference Include="..\..\contract\Forest\Forest.csproj" />
         <ProjectReference Include="..\..\src\AElf.Boilerplate.TestBase\AElf.Boilerplate.TestBase.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Protobuf\Proto\reference\" />
     </ItemGroup>
 
 </Project>
