@@ -13,7 +13,6 @@
     <ItemGroup>
         <PackageReference Include="AElf.Contracts.CrossChain" Version="1.6.0" />
         <PackageReference Include="AElf.Contracts.Genesis" Version="1.6.0" />
-        <PackageReference Include="AElf.Contracts.MultiToken" Version="1.6.0" />
         <PackageReference Include="AElf.Contracts.Election" Version="1.6.0" />
         <PackageReference Include="AElf.Contracts.Consensus.AEDPoS" Version="1.6.0" />
         <PackageReference Include="AElf.EconomicSystem" Version="1.6.0" />
@@ -49,12 +48,6 @@
     <ItemGroup>
         <ContractStub Include="..\..\protobuf\inscription_contract.proto">
             <Link>Protobuf\Proto\inscription_contract.proto</Link>
-        </ContractStub>
-        <ContractStub Include="..\..\protobuf\token_contract.proto">
-            <Link>Protobuf\Proto\token_contract.proto</Link>
-        </ContractStub>
-        <ContractStub Include="..\..\protobuf\token_contract_impl.proto">
-            <Link>Protobuf\Proto\token_contract_impl.proto</Link>
         </ContractStub>
         <ContractStub Include="..\..\protobuf\acs3.proto">
             <Link>Protobuf\Proto\acs3.proto</Link>
@@ -107,12 +100,22 @@
         <ContractStub Include="..\..\protobuf\acs7.proto">
             <Link>Protobuf\Proto\acs7.proto</Link>
         </ContractStub>
+        <ContractStub Include="..\..\protobuf\token_contract.proto">
+            <Link>Protobuf\Proto\token_contract.proto</Link>
+        </ContractStub>
+        <ContractStub Include="..\..\protobuf\token_contract_impl.proto">
+            <Link>Protobuf\Proto\token_contract_impl.proto</Link>
+        </ContractStub>
 
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\..\contract\Forest.Contracts.Inscription\Forest.Contracts.Inscription.csproj" />
         <ProjectReference Include="..\..\src\AElf.Boilerplate.TestBase\AElf.Boilerplate.TestBase.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Protobuf\Proto\reference\" />
     </ItemGroup>
 
 </Project>

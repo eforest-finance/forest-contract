@@ -33,7 +33,6 @@
     <ItemGroup>
         <PackageReference Include="AElf.ContractTestKit" Version="1.5.0" />
         <PackageReference Include="AElf.ContractTestBase" Version="1.5.0" />
-        <PackageReference Include="AElf.Contracts.MultiToken" Version="1.5.0" />
     </ItemGroup>
     <ItemGroup>
         <ContractMessage Include="..\..\protobuf\authority_info.proto">
@@ -47,14 +46,14 @@
         <ContractStub Include="..\..\protobuf\acs1.proto">
             <Link>Protobuf\Proto\acs1.proto</Link>
         </ContractStub>
+        <ContractStub Include="..\..\protobuf\drop_contract.proto">
+            <Link>Protobuf\Proto\drop_contract.proto</Link>
+        </ContractStub>
         <ContractStub Include="..\..\protobuf\token_contract.proto">
             <Link>Protobuf\Proto\token_contract.proto</Link>
         </ContractStub>
         <ContractStub Include="..\..\protobuf\token_contract_impl.proto">
             <Link>Protobuf\Proto\token_contract_impl.proto</Link>
-        </ContractStub>
-        <ContractStub Include="..\..\protobuf\drop_contract.proto">
-            <Link>Protobuf\Proto\drop_contract.proto</Link>
         </ContractStub>
     </ItemGroup>
 
@@ -66,6 +65,7 @@
 
     <ItemGroup>
         <Folder Include="Protobuf\Generated\" />
+        <Folder Include="Protobuf\Proto\reference\" />
     </ItemGroup>
 
 </Project>
