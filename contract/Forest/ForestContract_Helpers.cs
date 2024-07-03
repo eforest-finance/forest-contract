@@ -291,6 +291,16 @@ public partial class ForestContract
     {
         Assert(address != null, $"Invalid param Address");
         Assert(symbol != null, $"Invalid param Symbol");
+        var availableAllowance = State.TokenContract.GetAvailableAllowance.Call(new GetAllowanceInput
+        {
+            Symbol = symbol,
+            Owner = address,
+            Spender = Context.Self
+        });
+        if (availableAllowance?.Allowance != null && availableAllowance.Allowance > 0)
+        {
+            return availableAllowance.Allowance;
+        }
         var allowance = State.TokenContract.GetAllowance.Call(new GetAllowanceInput
         {
             Symbol = symbol,

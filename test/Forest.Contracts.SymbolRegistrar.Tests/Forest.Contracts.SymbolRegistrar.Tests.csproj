@@ -33,7 +33,6 @@
   <ItemGroup>
     <PackageReference Include="AElf.ContractTestKit" Version="1.5.0" />
     <PackageReference Include="AElf.ContractTestBase" Version="1.5.0" />
-    <PackageReference Include="AElf.Contracts.MultiToken" Version="1.5.0" />
     <PackageReference Include="AElf.Contracts.Parliament" Version="1.5.0" />
     <PackageReference Include="AElf.Contracts.Consensus.AEDPoS" Version="1.5.0" />
   </ItemGroup>
@@ -82,12 +81,6 @@
     <ContractStub Include="..\..\protobuf\symbol_registrar_contract.proto">
       <Link>Protobuf\Proto\symbol_registrar_contract.proto</Link>
     </ContractStub>
-    <ContractStub Include="..\..\protobuf\token_contract.proto">
-      <Link>Protobuf\Proto\token_contract.proto</Link>
-    </ContractStub>
-    <ContractStub Include="..\..\protobuf\token_contract_impl.proto">
-      <Link>Protobuf\Proto\token_contract_impl.proto</Link>
-    </ContractStub>
     <ContractStub Include="..\..\protobuf\association_contract.proto">
       <Link>Protobuf\Generated\Protobuf\Proto\association_contract.proto</Link>
     </ContractStub>
@@ -103,12 +96,22 @@
     <ContractStub Include="..\..\protobuf\proxy_account_contract.proto">
       <Link>Protobuf\Proto\proxy_account_contract.proto</Link>
     </ContractStub>
+    <ContractStub Include="..\..\protobuf\token_contract.proto">
+      <Link>Protobuf\Proto\token_contract.proto</Link>
+    </ContractStub>
+    <ContractStub Include="..\..\protobuf\token_contract_impl.proto">
+      <Link>Protobuf\Proto\token_contract_impl.proto</Link>
+    </ContractStub>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\contract\Forest.Contracts.SymbolRegistrar\Forest.Contracts.SymbolRegistrar.csproj" />
     <ProjectReference Include="..\..\src\AElf.Boilerplate.TestBase\AElf.Boilerplate.TestBase.csproj" />
     <ProjectReference Include="..\Forest.Contracts.MockProxyAccountContract\Forest.Contracts.MockProxyAccountContract.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Protobuf\Proto\reference\" />
   </ItemGroup>
 
 

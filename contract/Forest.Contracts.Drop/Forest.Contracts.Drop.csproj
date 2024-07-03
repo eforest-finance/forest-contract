@@ -23,7 +23,7 @@
           <Link>Protobuf\Proto\proxy_account_contract.proto</Link>
         </ContractReference>
         <ContractReference Include="..\..\protobuf\token_contract.proto">
-            <Link>Protobuf\Proto\token_contract.proto</Link>
+            <Link>Protobuf\Proto\reference\token_contract.proto</Link>
         </ContractReference>
     </ItemGroup>
     <ItemGroup>
