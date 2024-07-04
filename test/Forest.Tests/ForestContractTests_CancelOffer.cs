@@ -1251,4 +1251,114 @@ public class ForestContractTests_CancelOffer : ForestContractTestBase
         #endregion
     }
     
+    [Fact]
+    public async void BatchCancelOffer_Test()
+    {
+        await InitializeForestContract();
+        await PrepareNftData();
+
+        var sellPrice = Elf(5_0000_0000);
+        var offerPrice = Elf(5_0000_0000);
+        var offerQuantity = 1;
+        var dealQuantity = 1;
+        var serviceFee = dealQuantity * sellPrice.Amount * ServiceFeeRate / 10000;
+
+        var expireTime = Timestamp.FromDateTime(DateTime.UtcNow.AddMinutes(-5));
+        #region user buy
+        {
+            // user2 make offer to user1
+            await BuyerForestContractStub.MakeOffer.SendAsync(new MakeOfferInput()
+            {
+                Symbol = NftSymbol,
+                OfferTo = User1Address,
+                Quantity = offerQuantity,
+                Price = offerPrice,
+                ExpireTime = expireTime
+            });
+            
+            // user2 make offer to user1
+            await BuyerForestContractStub.MakeOffer.SendAsync(new MakeOfferInput()
+            {
+                Symbol = NftSymbol2,
+                OfferTo = User1Address,
+                Quantity = offerQuantity,
+                Price = offerPrice,
+                ExpireTime = expireTime
+            });
+        }
+        #endregion
+
+        #region check offer list
+        {
+            // list offers just sent
+            var offerList1 = BuyerForestContractStub.GetOfferList.SendAsync(new GetOfferListInput()
+            {
+                Symbol = NftSymbol,
+                Address = User2Address,
+            }).Result.Output;
+            offerList1.Value.Count.ShouldBeGreaterThan(0);
+            offerList1.Value[0].To.ShouldBe(User1Address);
+            offerList1.Value[0].From.ShouldBe(User2Address);
+            offerList1.Value[0].Quantity.ShouldBe(offerQuantity);
+            
+            var offerList2 = BuyerForestContractStub.GetOfferList.SendAsync(new GetOfferListInput()
+            {
+                Symbol = NftSymbol2,
+                Address = User2Address,
+            }).Result.Output;
+            offerList2.Value.Count.ShouldBeGreaterThan(0);
+            offerList2.Value[0].To.ShouldBe(User1Address);
+            offerList2.Value[0].From.ShouldBe(User2Address);
+            offerList2.Value[0].Quantity.ShouldBe(offerQuantity);
+        }
+        #endregion
+
+        #region Admin Cancel order
+        {
+            var batchCancelOfferInput = new BatchCancelOfferListInput()
+            {
+                BatchCancelOfferInfo = new BatchCancelOfferInfo()
+                {
+                        CancelOfferList = { new CancelOfferList()
+                        {
+                            Symbol = NftSymbol,
+                            ExpireTime = expireTime,
+                            OfferTo = User1Address,
+                            Price = offerPrice
+                        },
+                        new CancelOfferList()
+                        {
+                            Symbol = NftSymbol2,
+                            ExpireTime = expireTime,
+                            OfferTo = User1Address,
+                            Price = offerPrice
+                        } 
+                    }
+                }
+            };
+            await AdminForestContractStub.BatchCancelOfferList.SendAsync(batchCancelOfferInput);
+        }
+        #endregion
+
+        #region check offer list
+        {
+            var offerList1 = BuyerForestContractStub.GetOfferList.SendAsync(new GetOfferListInput()
+            {
+                Symbol = NftSymbol,
+                Address = User2Address,
+            }).Result.Output;
+            offerList1.Value.Count.ShouldBe(0);
+
+            
+            var offerList2 = BuyerForestContractStub.GetOfferList.SendAsync(new GetOfferListInput()
+            {
+                Symbol = NftSymbol2,
+                Address = User2Address,
+            }).Result.Output;
+            offerList2.Value.Count.ShouldBe(0);
+        }
+        #endregion
+    }
+    
+    
 }
