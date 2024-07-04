@@ -140,6 +140,13 @@ public partial class ForestContract
     public override Empty Delist(DelistInput input)
     {
         Assert(input.Quantity > 0, "Quantity must be a positive integer.");
+        SingleDelist(input);
+        return new Empty();
+    }
+
+    private Empty SingleDelist(DelistInput input)
+    {
+        Assert(input.Quantity > 0, "Quantity must be a positive integer.");
         var listedNftInfoList = State.ListedNFTInfoListMap[input.Symbol][Context.Sender];
         if (listedNftInfoList == null || listedNftInfoList.Value.All(i => i.ListType == ListType.NotListed))
         {
@@ -369,5 +376,34 @@ public partial class ForestContract
             PurchaseAmount = totalAmount,
         });
         return new Empty();
+    }
+
+    public override Empty BatchCancelList(BatchCancelListInput input)
+    {
+        AssertContractInitialized();
+        RequireMaxBatchCancelListCountSet();
+        Assert(Context.Sender != null, "Invalid input data : Context.Sender");
+        Assert(input != null, "Invalid input data");
+        Assert(input.BatchCancelListInfo != null, "Invalid input data : Symbol");
+        Assert(input.BatchCancelListInfo.CancelList != null, "Invalid input data : CancelList");
+        var maxBatchCancelCount = State.MaxBatchCancelListCount.Value;
+        Assert(input.BatchCancelListInfo.CancelList.Count <= maxBatchCancelCount, "Invalid cancel list count.");
+        foreach (var cancelInfo in input.BatchCancelListInfo.CancelList)
+        {
+            var cancelInput = new DelistInput()
+            {
+                Symbol = cancelInfo.Symbol,
+                Quantity = cancelInfo.Quantity,
+                Price = new Price()
+                {
+                    Symbol = cancelInfo.Price.Symbol,
+                    Amount = cancelInfo.Price.Amount
+                },
+                StartTime = cancelInfo.StartTime
+            };
+            SingleDelist(cancelInput);
+        }
+        return new Empty();
+
     }
 }
