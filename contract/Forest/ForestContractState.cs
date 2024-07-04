@@ -61,6 +61,9 @@ namespace Forest
         /// Symbol -> Address TxId ->  CreateArtInfo
         /// </summary>
         public MappedState<Address, string, CreateArtInfo> CreateArtInfoMap { get; set; }
+        public SingletonState<int> MaxBatchCancelOfferCount { get; set; }
+        
+        public SingletonState<int> MaxBatchCancelListCount { get; set; }
 
     }
 }

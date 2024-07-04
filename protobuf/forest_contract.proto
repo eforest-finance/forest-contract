@@ -79,7 +79,13 @@ service ForestContract {
 
   rpc RemoveAIImageSize (google.protobuf.StringValue) returns (google.protobuf.Empty){
   }
+  
+  rpc SetMaxBatchCancelOfferCount(google.protobuf.Int32Value) returns (google.protobuf.Empty){
+  }
 
+  rpc SetMaxBatchCancelListCount(google.protobuf.Int32Value) returns (google.protobuf.Empty){
+  }
+  
   // Views.
   rpc GetListedNFTInfoList (GetListedNFTInfoListInput) returns (ListedNFTInfoList) {
     option (aelf.is_view) = true;
@@ -129,6 +135,14 @@ service ForestContract {
   rpc GetCreateArtInfo (GetCreateArtInfoInput) returns (CreateArtInfo){
     option (aelf.is_view) = true;
   }
+
+  rpc GetMaxBatchCancelOfferCount(google.protobuf.Empty) returns (google.protobuf.Int32Value){
+    option (aelf.is_view) = true;
+  }
+
+  rpc GetMaxBatchCancelListCount(google.protobuf.Empty) returns (google.protobuf.Int32Value){
+    option (aelf.is_view) = true;
+  }
 }
 
 // Structs.
@@ -145,7 +159,6 @@ message ListedNFTInfo {
 message ListedNFTInfoList {
   repeated ListedNFTInfo value = 1;
 }
-
 
 message StringList {
   repeated string value = 1;

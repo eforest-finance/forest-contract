@@ -342,4 +342,22 @@ public partial class ForestContract
         var size = State.AIImageSizeList.Value.Value;
         Assert(State.AIImageSizeList.Value.Value.Contains(input.Size), $"Invalid input size");
     }
+    
+    private void RequireMaxBatchCancelOfferCountSet()
+    {
+        var maxCount = State.MaxBatchCancelOfferCount.Value;
+        if (maxCount <= 0)
+        {
+            State.MaxBatchCancelOfferCount.Value = DefaultMaxBatchCancelOfferCount;
+        }
+    }
+    
+    private void RequireMaxBatchCancelListCountSet()
+    {
+        var maxCount = State.MaxBatchCancelListCount.Value;
+        if (maxCount <= 0)
+        {
+            State.MaxBatchCancelListCount.Value = DefaultMaxBatchCancelListCount;
+        }
+    }
 }
