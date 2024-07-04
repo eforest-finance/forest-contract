@@ -534,6 +534,12 @@ public partial class ForestContract
     public override Empty CancelOfferListByExpireTime(CancelOfferListByExpireTimeInput input)
     {
         AssertContractInitialized();
+        CancelOfferList(input);
+        return new Empty();
+    }
+
+    private Empty CancelOfferList(CancelOfferListByExpireTimeInput input)
+    {
         Assert(Context.Sender != null, "Invalid input data : Context.Sender");
         Assert(input != null, "Invalid input data");
         Assert(input.Symbol != null, "Invalid input data : Symbol");
@@ -599,7 +605,7 @@ public partial class ForestContract
         return new Empty();
         
     }
-    
+
     private bool AreOffersEqual(Offer existOffer, CancelOffer cancelOffer)
     {
         return existOffer.To == cancelOffer.OfferTo &&
@@ -756,5 +762,34 @@ public partial class ForestContract
             Price = input.Price,
             Quantity = input.Quantity
         });
+    }
+    
+    public override Empty BatchCancelOfferList(BatchCancelOfferListInput input)
+    {
+        AssertContractInitialized();
+        Assert(Context.Sender != null, "Invalid input data : Context.Sender");
+        Assert(input != null, "Invalid input data");
+        Assert(input.BatchCancelOfferInfo != null, "Invalid input data : Symbol");
+        Assert(input.BatchCancelOfferInfo.CancelOfferList != null, "Invalid input data : CancelOfferList");
+
+        foreach (var cancelOffer in input.BatchCancelOfferInfo.CancelOfferList)
+        {
+            var cancelInput = new CancelOfferListByExpireTimeInput()
+            {
+                Symbol = cancelOffer.Symbol,
+                CancelOfferList = {new CancelOffer()
+                {
+                    ExpireTime = cancelOffer.ExpireTime,
+                    OfferTo = cancelOffer.OfferTo,
+                    Price = new Price()
+                    {
+                        Symbol = cancelOffer.Price.Symbol,
+                        Amount = cancelOffer.Price.Amount
+                    }
+                }}
+            };
+            CancelOfferList(cancelInput);
+        }
+        return new Empty();
     }
 }

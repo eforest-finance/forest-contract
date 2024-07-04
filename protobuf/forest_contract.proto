@@ -280,7 +280,6 @@ message BatchCancelOfferListInput {
 
 message BatchCancelOfferInfo{
   repeated CancelOfferList cancel_offer_list =2;
-
 }
 
 message CancelOfferList{
