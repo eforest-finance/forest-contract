@@ -770,7 +770,7 @@ public partial class ForestContract
         RequireMaxBatchCancelOfferCountSet();
         Assert(Context.Sender != null, "Invalid input data : Context.Sender");
         Assert(input != null, "Invalid input data");
-        Assert(input.BatchCancelOfferInfo != null, "Invalid input data : Symbol");
+        Assert(input.BatchCancelOfferInfo != null, "Invalid input data : BatchCancelOfferInfo");
         Assert(input.BatchCancelOfferInfo.CancelOfferList != null, "Invalid input data : CancelOfferList");
         var maxBatchCancelOfferCount = State.MaxBatchCancelOfferCount.Value;
         Assert(input.BatchCancelOfferInfo.CancelOfferList.Count <= maxBatchCancelOfferCount, "Invalid cancel list count.");
