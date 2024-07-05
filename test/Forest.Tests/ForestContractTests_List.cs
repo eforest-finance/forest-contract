@@ -3216,25 +3216,48 @@ public class ForestContractListTests : ForestContractTestBase
                 } }
             }
         };
-        
-        //batch cancel list
-        await Seller1ForestContractStub.BatchCancelList.SendAsync(batchInput);
-        
-        var listedNftInfo1 = (await Seller1ForestContractStub.GetListedNFTInfoList.CallAsync(
-            new GetListedNFTInfoListInput
-            {
-                Symbol = NftSymbol,
-                Owner = User1Address
-            })).Value.First();
-        listedNftInfo1.ShouldBeNull();
-        
-        var listedNftInfo2 = (await Seller1ForestContractStub.GetListedNFTInfoList.CallAsync(
-            new GetListedNFTInfoListInput
-            {
-                Symbol = NftSymbol2,
-                Owner = User1Address
-            })).Value.First();
-        listedNftInfo1.ShouldBeNull();
 
+        {
+            var listedNftInfo1 = (await Seller1ForestContractStub.GetListedNFTInfoList.CallAsync(
+                new GetListedNFTInfoListInput
+                {
+                    Symbol = NftSymbol,
+                    Owner = User1Address
+                })).Value.First();
+            listedNftInfo1.ShouldNotBeNull();
+            listedNftInfo1.Symbol.ShouldBe(NftSymbol);
+        
+            var listedNftInfo2 = (await Seller1ForestContractStub.GetListedNFTInfoList.CallAsync(
+                new GetListedNFTInfoListInput
+                {
+                    Symbol = NftSymbol2,
+                    Owner = User1Address
+                })).Value.First();
+            listedNftInfo2.ShouldNotBeNull();
+            listedNftInfo2.Symbol.ShouldBe(NftSymbol2);
+
+        }
+
+        {
+            //batch cancel list
+            await Seller1ForestContractStub.BatchCancelList.SendAsync(batchInput);
+
+            var listedNftInfo1 = (await Seller1ForestContractStub.GetListedNFTInfoList.CallAsync(
+                new GetListedNFTInfoListInput
+                {
+                    Symbol = NftSymbol,
+                    Owner = User1Address
+                })).Value;
+            listedNftInfo1.ShouldBeEmpty();
+
+            var listedNftInfo2 = (await Seller1ForestContractStub.GetListedNFTInfoList.CallAsync(
+                new GetListedNFTInfoListInput
+                {
+                    Symbol = NftSymbol2,
+                    Owner = User1Address
+                })).Value;
+            listedNftInfo1.ShouldBeEmpty();
+
+        }
     }
 }

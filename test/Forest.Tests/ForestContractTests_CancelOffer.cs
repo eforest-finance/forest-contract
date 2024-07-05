@@ -1263,7 +1263,7 @@ public class ForestContractTests_CancelOffer : ForestContractTestBase
         var dealQuantity = 1;
         var serviceFee = dealQuantity * sellPrice.Amount * ServiceFeeRate / 10000;
 
-        var expireTime = Timestamp.FromDateTime(DateTime.UtcNow.AddMinutes(-5));
+        var expireTime = Timestamp.FromDateTime(DateTime.UtcNow.AddMinutes(5));
         #region user buy
         {
             // user2 make offer to user1
@@ -1336,7 +1336,7 @@ public class ForestContractTests_CancelOffer : ForestContractTestBase
                     }
                 }
             };
-            await AdminForestContractStub.BatchCancelOfferList.SendAsync(batchCancelOfferInput);
+            await BuyerForestContractStub.BatchCancelOfferList.SendAsync(batchCancelOfferInput);
         }
         #endregion
 
