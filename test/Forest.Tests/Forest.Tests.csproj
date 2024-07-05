@@ -11,6 +11,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AElf.Contracts.MultiToken" Version="1.7.0" />
         <PackageReference Include="AElf.Contracts.Election" Version="1.5.0" />
         <PackageReference Include="AElf.Contracts.Consensus.AEDPoS" Version="1.5.0" />
         <PackageReference Include="AElf.EconomicSystem" Version="1.5.0" />
@@ -97,8 +98,8 @@
         <ProjectReference Include="..\..\src\AElf.Boilerplate.TestBase\AElf.Boilerplate.TestBase.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Protobuf\Proto\reference\" />
-    </ItemGroup>
+<!--    <ItemGroup>-->
+<!--      <Folder Include="Protobuf\Proto\reference\" />-->
+<!--    </ItemGroup>-->
 
 </Project>
