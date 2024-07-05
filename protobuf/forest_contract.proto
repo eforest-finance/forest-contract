@@ -256,7 +256,7 @@ message ListWithFixedPriceInput {
   bool is_whitelist_available = 8;
 }
 
-message DelistInDelistInputput {
+message DelistInput {
   string symbol = 1;
   Price price = 2;
   int64 quantity = 4;
@@ -307,7 +307,7 @@ message BatchCancelListInput{
 }
 
 message BatchCancelListInfo{
-  repeated  cancel_list =1;
+  repeated DelistInput cancel_list =1;
 }
 
 
