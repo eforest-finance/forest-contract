@@ -139,7 +139,6 @@ public partial class ForestContract
 
     public override Empty Delist(DelistInput input)
     {
-        Assert(input.Quantity > 0, "Quantity must be a positive integer.");
         SingleDelist(input);
         return new Empty();
     }
