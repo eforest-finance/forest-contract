@@ -1259,6 +1259,14 @@ public class ForestContractTests_Security : ForestContractTestBase
             Amount = issueAmount,
             Spender = ForestContractAddress
         });
+         await AdminForestContractStub.SetBizConfig.SendAsync(new BizConfig()
+         {
+             MaxListCount = 3,
+             MaxOfferCount = 3,
+             MaxOfferDealCount = 3,
+             MaxTokenWhitelistCount = 3
+             
+         });
 
         var bizConfig = await Seller1ForestContractStub.GetBizConfig.SendAsync(new Empty());
 
@@ -1350,7 +1358,6 @@ public class ForestContractTests_Security : ForestContractTestBase
             Spender = ForestContractAddress, Symbol = offerPrice.Symbol,
             Amount = bizConfig.Output.MaxListCount*offerPrice.Amount
         });
-        bizConfig.Output.MaxListCount = 3;
         for (var i = 0; i < bizConfig.Output.MaxListCount; i++)
         {
             // user2 make offer to user1
