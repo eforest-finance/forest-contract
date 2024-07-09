@@ -154,10 +154,6 @@ public partial class ForestContract
 
         Assert(input.Price != null, "Need to specific list record.");
         ListedNFTInfo listedNftInfo = null;
-        /*listedNftInfoList.Value.FirstOrDefault(i =>
-            i.Price.Amount == input.Price.Amount && i.Price.Symbol == input.Price.Symbol &&
-            i.Owner == Context.Sender &&
-            (input.StartTime == null ? true : input.StartTime.Seconds == i.Duration.StartTime.Seconds));*/
 
         foreach (var i in listedNftInfoList.Value)
         {
