@@ -153,10 +153,22 @@ public partial class ForestContract
         }
 
         Assert(input.Price != null, "Need to specific list record.");
-        var listedNftInfo = listedNftInfoList.Value.FirstOrDefault(i =>
+        ListedNFTInfo listedNftInfo = null;
+        /*listedNftInfoList.Value.FirstOrDefault(i =>
             i.Price.Amount == input.Price.Amount && i.Price.Symbol == input.Price.Symbol &&
             i.Owner == Context.Sender &&
-            (input.StartTime == null ? true : input.StartTime.Seconds == i.Duration.StartTime.Seconds));
+            (input.StartTime == null ? true : input.StartTime.Seconds == i.Duration.StartTime.Seconds));*/
+
+        foreach (var i in listedNftInfoList.Value)
+        {
+            if (i.Price.Amount == input.Price.Amount && i.Price.Symbol == input.Price.Symbol &&
+                i.Owner == Context.Sender &&
+                (input.StartTime == null ? true : input.StartTime.Seconds == i.Duration.StartTime.Seconds))
+            {
+                listedNftInfo = i;
+                break;
+            }
+        }
         
         if (listedNftInfo == null)
         {
