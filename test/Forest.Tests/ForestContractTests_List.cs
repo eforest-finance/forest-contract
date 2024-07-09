@@ -19,7 +19,7 @@ public class ForestContractListTests : ForestContractTestBase
     private const int ServiceFeeRate = 1000; // 10%
     private const long InitializeElfAmount = 10000_0000_0000;
 
-    /*private async Task InitializeForestContract()
+    private async Task InitializeForestContract()
     {
         await AdminForestContractStub.Initialize.SendAsync(new InitializeInput
         {
@@ -3163,7 +3163,7 @@ public class ForestContractListTests : ForestContractTestBase
         }
     }
     
-    [Fact]
+    /*[Fact]
     public async void BatchCancelListTest()
     {
         //basic begin
