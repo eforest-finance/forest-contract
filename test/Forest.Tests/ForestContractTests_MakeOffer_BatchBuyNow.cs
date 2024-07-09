@@ -14,7 +14,7 @@ namespace Forest;
 
 public partial class ForestContractTests_MakeOffer
 {
-    /*private async Task<Timestamp> InitUserListInfo(int listQuantity, long inputSellPrice, int approveQuantity,
+    private async Task<Timestamp> InitUserListInfo(int listQuantity, long inputSellPrice, int approveQuantity,
         TokenContractImplContainer.TokenContractImplStub userTokenContractStub
         , ForestContractContainer.ForestContractStub sellerForestContractStub ,Address userAddress)
     {
@@ -1887,5 +1887,5 @@ public partial class ForestContractTests_MakeOffer
         }
 
         #endregion
-    }*/
+    }
 }
