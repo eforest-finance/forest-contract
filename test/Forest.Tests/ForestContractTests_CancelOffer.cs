@@ -1291,25 +1291,25 @@ public class ForestContractTests_CancelOffer : ForestContractTestBase
         #region check offer list
         {
             // list offers just sent
-            var offerList1 = BuyerForestContractStub.GetOfferList.SendAsync(new GetOfferListInput()
+            var offerList1 = await BuyerForestContractStub.GetOfferList.SendAsync(new GetOfferListInput()
             {
                 Symbol = NftSymbol,
                 Address = User2Address,
-            }).Result.Output;
-            offerList1.Value.Count.ShouldBeGreaterThan(0);
-            offerList1.Value[0].To.ShouldBe(User1Address);
-            offerList1.Value[0].From.ShouldBe(User2Address);
-            offerList1.Value[0].Quantity.ShouldBe(offerQuantity);
-            
-            var offerList2 = BuyerForestContractStub.GetOfferList.SendAsync(new GetOfferListInput()
+            });
+            offerList1.Output.Value.Count.ShouldBeGreaterThan(0);
+            offerList1.Output.Value[0].To.ShouldBe(User1Address);
+            offerList1.Output.Value[0].From.ShouldBe(User2Address);
+            offerList1.Output.Value[0].Quantity.ShouldBe(offerQuantity);
+
+            var offerList2 = await BuyerForestContractStub.GetOfferList.SendAsync(new GetOfferListInput()
             {
                 Symbol = NftSymbol2,
                 Address = User2Address,
-            }).Result.Output;
-            offerList2.Value.Count.ShouldBeGreaterThan(0);
-            offerList2.Value[0].To.ShouldBe(User1Address);
-            offerList2.Value[0].From.ShouldBe(User2Address);
-            offerList2.Value[0].Quantity.ShouldBe(offerQuantity);
+            });
+            offerList2.Output.Value.Count.ShouldBeGreaterThan(0);
+            offerList2.Output.Value[0].To.ShouldBe(User1Address);
+            offerList2.Output.Value[0].From.ShouldBe(User2Address);
+            offerList2.Output.Value[0].Quantity.ShouldBe(offerQuantity);
         }
         #endregion
 
@@ -1342,20 +1342,20 @@ public class ForestContractTests_CancelOffer : ForestContractTestBase
 
         #region check offer list
         {
-            var offerList1 = BuyerForestContractStub.GetOfferList.SendAsync(new GetOfferListInput()
+            var offerList1 = await BuyerForestContractStub.GetOfferList.SendAsync(new GetOfferListInput()
             {
                 Symbol = NftSymbol,
                 Address = User2Address,
-            }).Result.Output;
-            offerList1.Value.Count.ShouldBe(0);
+            });
+            offerList1.Output.Value.Count.ShouldBe(0);
 
             
-            var offerList2 = BuyerForestContractStub.GetOfferList.SendAsync(new GetOfferListInput()
+            var offerList2 = await BuyerForestContractStub.GetOfferList.SendAsync(new GetOfferListInput()
             {
                 Symbol = NftSymbol2,
                 Address = User2Address,
-            }).Result.Output;
-            offerList2.Value.Count.ShouldBe(0);
+            });
+            offerList2.Output.Value.Count.ShouldBe(0);
         }
         #endregion
     }
