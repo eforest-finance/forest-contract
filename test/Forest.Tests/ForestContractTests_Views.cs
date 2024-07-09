@@ -1191,4 +1191,28 @@ public class ForestContractTests_Views : ForestContractTestBase
         
     }
     
+    [Fact]
+    public async void GetMaxBatchCancelOfferListCount_Test()
+    {
+        await InitializeForestContract();
+        var count = await AdminForestContractStub.GetMaxBatchCancelOfferCount.CallAsync(new Empty());
+        count.Value.ShouldBe(0);
+        
+        await AdminForestContractStub.SetMaxBatchCancelOfferCount.SendAsync(new Int32Value(){Value = 10});
+        count = await AdminForestContractStub.GetMaxBatchCancelOfferCount.CallAsync(new Empty());
+        count.Value.ShouldBe(10);
+    }
+    
+    [Fact]
+    public async void GetMaxBatchCancelListCount_Test()
+    {
+        await InitializeForestContract();
+        var count = await AdminForestContractStub.GetMaxBatchCancelListCount.CallAsync(new Empty());
+        count.Value.ShouldBe(0);
+        
+        await AdminForestContractStub.SetMaxBatchCancelListCount.SendAsync(new Int32Value(){Value = 10});
+        count = await AdminForestContractStub.GetMaxBatchCancelListCount.CallAsync(new Empty());
+        count.Value.ShouldBe(10);
+    }
+    
 }

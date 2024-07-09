@@ -147,4 +147,14 @@ public partial class ForestContract
         Assert(input != null, "Invalid TransactionId");
         return State.CreateArtInfoMap[input.Address ?? Context.Sender][input.TransactionId];
     }
+    
+    public override Int32Value GetMaxBatchCancelOfferCount(Empty input)
+    {
+        return new Int32Value { Value = State.MaxBatchCancelOfferCount.Value };
+    }
+    
+    public override Int32Value GetMaxBatchCancelListCount(Empty input)
+    {
+        return new Int32Value { Value = State.MaxBatchCancelListCount.Value };
+    }
 }
