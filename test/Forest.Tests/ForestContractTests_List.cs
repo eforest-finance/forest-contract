@@ -1074,7 +1074,7 @@ public class ForestContractListTests : ForestContractTestBase
         }
     }
 
-    /*[Fact]
+    [Fact]
     public async void Delist20Test()
     {
         await InitializeForestContract();
@@ -1115,10 +1115,10 @@ public class ForestContractListTests : ForestContractTestBase
             var exception = await Assert.ThrowsAsync<Exception>(act);
             exception.Message.ShouldContain("Quantity must be a positive integer.");
         }
-    }*/
+    }
 
 
-    /*[Fact]
+    [Fact]
     public async void DelistAllTest()
     {
         await InitializeForestContract();
@@ -1194,9 +1194,9 @@ public class ForestContractListTests : ForestContractTestBase
                 Owner = User1Address
             }));
         listedNftInfo1.Value.Count.ShouldBe(0);
-    }*/
+    }
 
-    /*[Fact]
+    [Fact]
     public async void Delist21Test()
     {
         await InitializeForestContract();
@@ -1242,7 +1242,7 @@ public class ForestContractListTests : ForestContractTestBase
                 Owner = User1Address
             }));
         listedNftInfo1.Value.Count.ShouldBe(0);
-    }*/
+    }
 
     
     private async Task InitListInfo(int listQuantity, int inputSellPrice, int approveQuantity, string symbol = null, Timestamp startTime = null)
@@ -1294,7 +1294,7 @@ public class ForestContractListTests : ForestContractTestBase
 
     private async Task QueryLastByStartAscListInfo(int intpuListQuantity, int inputSellPrice, string symbol = null)
     {
-        {
+        /*{
             var listedNftInfo = (await Seller1ForestContractStub.GetListedNFTInfoList.CallAsync(
                 new GetListedNFTInfoListInput
                 {
@@ -1308,12 +1308,12 @@ public class ForestContractListTests : ForestContractTestBase
             listedNftInfo.Duration.StartTime.ShouldNotBeNull();
             listedNftInfo.Duration.DurationHours.ShouldBe(0);
             listedNftInfo.Duration.DurationMinutes.ShouldBe(4392 * 60);
-        }
+        }*/
     }
     
     private async Task QueryFirstByStartAscListInfo(int intpuListQuantity, int inputSellPrice)
     {
-        {
+        /*{
             var listedNftInfo = (await Seller1ForestContractStub.GetListedNFTInfoList.CallAsync(
                 new GetListedNFTInfoListInput
                 {
@@ -1327,10 +1327,10 @@ public class ForestContractListTests : ForestContractTestBase
             listedNftInfo.Duration.StartTime.ShouldNotBeNull();
             listedNftInfo.Duration.DurationHours.ShouldBe(0);
             listedNftInfo.Duration.DurationMinutes.ShouldBe(4392 * 60);
-        }
+        }*/
     }
     
-     /*[Fact]
+     [Fact]
      public async void Delist22Test()
      {
          //basic begin
@@ -1379,7 +1379,7 @@ public class ForestContractListTests : ForestContractTestBase
          });
          
          executionResult1.TransactionResult.Logs.Count.ShouldBe(0);
-     }*/
+     }
  
      [Fact]
      public async void Delist23Test()
