@@ -554,15 +554,26 @@ public partial class ForestContract
         Assert(offerList?.Value?.Count > 0, "Offer not exists");
 
 
-        var cancelOfferList = offerList?.Value.Where(existOffer => input.CancelOfferList.Any(cannelOffer =>
-            AreOffersEqual(existOffer, cannelOffer)
-        )).ToList();
+        var cancelOfferList = new List<Offer>();
+        var remainOfferList = new List<Offer>();
+        foreach (var existOffer in offerList?.Value)
+        {
+            foreach (var cannelOffer in input.CancelOfferList)
+            {
+                if (AreOffersEqual(existOffer, cannelOffer))
+                {
+                    cancelOfferList.Add(existOffer);
+                }
+                if (!AreOffersEqual(existOffer, cannelOffer))
+                {
+                    remainOfferList.Add(existOffer);
+                }
+            }
+        }
         Assert(cancelOfferList?.Count > 0, "Cannel Offer not exists");
         
         var newOfferList = new OfferList();
-        var remainOfferList = offerList?.Value.Where(existOffer => !input.CancelOfferList.Any(cannelOffer =>
-            AreOffersEqual(existOffer, cannelOffer)
-        )).ToList();
+
         newOfferList.Value.Add(remainOfferList);
         
         var cancelOfferMap = new Dictionary<string, long>();
