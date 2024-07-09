@@ -856,7 +856,7 @@ namespace Forest.Contracts.Drop
             var dropInfoException = await DropContractStub.SubmitDrop.SendWithExceptionAsync(dropId);
             dropInfoException.TransactionResult.Error.ShouldContain("Invalid drop state.");
             //expire
-            await Task.Delay(11000);
+            Thread.Sleep(11000);
             dropInfo.ExpireTime.ShouldBeLessThanOrEqualTo(DateTime.UtcNow.ToTimestamp());
         }
         
