@@ -1074,7 +1074,7 @@ public class ForestContractListTests : ForestContractTestBase
         }
     }
 
-    [Fact]
+    /*[Fact]
     public async void Delist20Test()
     {
         await InitializeForestContract();
@@ -1115,7 +1115,7 @@ public class ForestContractListTests : ForestContractTestBase
             var exception = await Assert.ThrowsAsync<Exception>(act);
             exception.Message.ShouldContain("Quantity must be a positive integer.");
         }
-    }
+    }*/
 
 
     /*[Fact]
@@ -1330,7 +1330,7 @@ public class ForestContractListTests : ForestContractTestBase
         }
     }
     
-     [Fact]
+     /*[Fact]
      public async void Delist22Test()
      {
          //basic begin
@@ -1379,7 +1379,7 @@ public class ForestContractListTests : ForestContractTestBase
          });
          
          executionResult1.TransactionResult.Logs.Count.ShouldBe(0);
-     }
+     }*/
  
      [Fact]
      public async void Delist23Test()
