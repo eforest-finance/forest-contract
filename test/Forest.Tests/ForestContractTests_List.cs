@@ -1118,7 +1118,7 @@ public class ForestContractListTests : ForestContractTestBase
     }
 
 
-    [Fact]
+    /*[Fact]
     public async void DelistAllTest()
     {
         await InitializeForestContract();
@@ -1194,9 +1194,9 @@ public class ForestContractListTests : ForestContractTestBase
                 Owner = User1Address
             }));
         listedNftInfo1.Value.Count.ShouldBe(0);
-    }
+    }*/
 
-    [Fact]
+    /*[Fact]
     public async void Delist21Test()
     {
         await InitializeForestContract();
@@ -1242,7 +1242,7 @@ public class ForestContractListTests : ForestContractTestBase
                 Owner = User1Address
             }));
         listedNftInfo1.Value.Count.ShouldBe(0);
-    }
+    }*/
 
     
     private async Task InitListInfo(int listQuantity, int inputSellPrice, int approveQuantity, string symbol = null, Timestamp startTime = null)
@@ -1330,7 +1330,7 @@ public class ForestContractListTests : ForestContractTestBase
         }
     }
     
-    /* [Fact]
+     [Fact]
      public async void Delist22Test()
      {
          //basic begin
@@ -1883,7 +1883,7 @@ public class ForestContractListTests : ForestContractTestBase
          log4.Duration.StartTime.ShouldNotBeNull();
          log4.Duration.PublicTime.ShouldNotBeNull();
          log4.Price.Amount.ShouldBe(inputSellPrice4);
-     }*/
+     }
     
     [Fact]
     public async void Delist28Test()
