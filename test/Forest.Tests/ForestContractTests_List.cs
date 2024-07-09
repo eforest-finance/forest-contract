@@ -1885,7 +1885,7 @@ public class ForestContractListTests : ForestContractTestBase
         log4.Price.Amount.ShouldBe(inputSellPrice4);
     }*/
     
-    /*[Fact]
+    [Fact]
     public async void Delist28Test()
     {
         //basic begin
@@ -2542,9 +2542,9 @@ public class ForestContractListTests : ForestContractTestBase
         var exception = await Assert.ThrowsAsync<Exception>(act);
         exception.Message.ShouldContain("BatchDeListType not exists.");
         
-    }*/
+    }
 
-    /*[Fact]
+    [Fact]
     public async void Delist36Test_BatchDelistType_Is_Null()
     {
         //basic begin
@@ -3161,9 +3161,9 @@ public class ForestContractListTests : ForestContractTestBase
             log1.Duration.DurationMinutes.ShouldBe(59);
 
         }
-    }*/
+    }
     
-    /*[Fact]
+    [Fact]
     public async void BatchCancelListTest()
     {
         //basic begin
@@ -3259,5 +3259,5 @@ public class ForestContractListTests : ForestContractTestBase
             listedNftInfo1.ShouldBeEmpty();
 
         }
-    }*/
+    }
 }
