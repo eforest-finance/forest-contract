@@ -239,5 +239,23 @@ namespace Forest
             });
             return new Empty();
         }
+        
+        public override Empty SetMaxBatchCancelOfferCount(Int32Value input)
+        {
+            AssertSenderIsAdmin();
+            Assert(input is { Value: > 0 }, "Invalid input.");
+
+            State.MaxBatchCancelOfferCount.Value = input.Value;
+            return new Empty();
+        }
+        
+        public override Empty SetMaxBatchCancelListCount(Int32Value input)
+        {
+            AssertSenderIsAdmin();
+            Assert(input is { Value: > 0 }, "Invalid input.");
+
+            State.MaxBatchCancelListCount.Value = input.Value;
+            return new Empty();
+        }
     }
 }

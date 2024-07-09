@@ -1259,6 +1259,14 @@ public class ForestContractTests_Security : ForestContractTestBase
             Amount = issueAmount,
             Spender = ForestContractAddress
         });
+         await AdminForestContractStub.SetBizConfig.SendAsync(new BizConfig()
+         {
+             MaxListCount = 3,
+             MaxOfferCount = 3,
+             MaxOfferDealCount = 3,
+             MaxTokenWhitelistCount = 3
+             
+         });
 
         var bizConfig = await Seller1ForestContractStub.GetBizConfig.SendAsync(new Empty());
 
@@ -1336,6 +1344,13 @@ public class ForestContractTests_Security : ForestContractTestBase
 
         #region create offer reach maxCount
 
+        await AdminForestContractStub.SetBizConfig.SendAsync(new BizConfig()
+        {
+            MaxListCount = 3,
+            MaxOfferCount = 3,
+            MaxOfferDealCount = 3,
+            MaxTokenWhitelistCount = 3
+        });
         var bizConfig = await Seller1ForestContractStub.GetBizConfig.SendAsync(new Empty());
 
         await UserTokenContractStub.Approve.SendAsync(new ApproveInput()

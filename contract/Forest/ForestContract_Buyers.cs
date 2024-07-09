@@ -534,6 +534,12 @@ public partial class ForestContract
     public override Empty CancelOfferListByExpireTime(CancelOfferListByExpireTimeInput input)
     {
         AssertContractInitialized();
+        CancelOfferList(input);
+        return new Empty();
+    }
+
+    private Empty CancelOfferList(CancelOfferListByExpireTimeInput input)
+    {
         Assert(Context.Sender != null, "Invalid input data : Context.Sender");
         Assert(input != null, "Invalid input data");
         Assert(input.Symbol != null, "Invalid input data : Symbol");
@@ -548,15 +554,26 @@ public partial class ForestContract
         Assert(offerList?.Value?.Count > 0, "Offer not exists");
 
 
-        var cancelOfferList = offerList?.Value.Where(existOffer => input.CancelOfferList.Any(cannelOffer =>
-            AreOffersEqual(existOffer, cannelOffer)
-        )).ToList();
+        var cancelOfferList = new List<Offer>();
+        var remainOfferList = new List<Offer>();
+        foreach (var existOffer in offerList?.Value)
+        {
+            foreach (var cannelOffer in input.CancelOfferList)
+            {
+                if (AreOffersEqual(existOffer, cannelOffer))
+                {
+                    cancelOfferList.Add(existOffer);
+                }
+                if (!AreOffersEqual(existOffer, cannelOffer))
+                {
+                    remainOfferList.Add(existOffer);
+                }
+            }
+        }
         Assert(cancelOfferList?.Count > 0, "Cannel Offer not exists");
         
         var newOfferList = new OfferList();
-        var remainOfferList = offerList?.Value.Where(existOffer => !input.CancelOfferList.Any(cannelOffer =>
-            AreOffersEqual(existOffer, cannelOffer)
-        )).ToList();
+
         newOfferList.Value.Add(remainOfferList);
         
         var cancelOfferMap = new Dictionary<string, long>();
@@ -599,7 +616,7 @@ public partial class ForestContract
         return new Empty();
         
     }
-    
+
     private bool AreOffersEqual(Offer existOffer, CancelOffer cancelOffer)
     {
         return existOffer.To == cancelOffer.OfferTo &&
@@ -756,5 +773,36 @@ public partial class ForestContract
             Price = input.Price,
             Quantity = input.Quantity
         });
+    }
+    
+    public override Empty BatchCancelOfferList(BatchCancelOfferListInput input)
+    {
+        AssertContractInitialized();
+        RequireMaxBatchCancelOfferCountSet();
+        Assert(Context.Sender != null, "Invalid input data : Context.Sender");
+        Assert(input != null, "Invalid input data");
+        Assert(input.BatchCancelOfferInfo != null, "Invalid input data : BatchCancelOfferInfo");
+        Assert(input.BatchCancelOfferInfo.CancelOfferList != null, "Invalid input data : CancelOfferList");
+        var maxBatchCancelOfferCount = State.MaxBatchCancelOfferCount.Value;
+        Assert(input.BatchCancelOfferInfo.CancelOfferList.Count <= maxBatchCancelOfferCount, "Invalid cancel list count.");
+        foreach (var cancelOffer in input.BatchCancelOfferInfo.CancelOfferList)
+        {
+            var cancelInput = new CancelOfferListByExpireTimeInput()
+            {
+                Symbol = cancelOffer.Symbol,
+                CancelOfferList = {new CancelOffer()
+                {
+                    ExpireTime = cancelOffer.ExpireTime,
+                    OfferTo = cancelOffer.OfferTo,
+                    Price = new Price()
+                    {
+                        Symbol = cancelOffer.Price.Symbol,
+                        Amount = cancelOffer.Price.Amount
+                    }
+                }}
+            };
+            CancelOfferList(cancelInput);
+        }
+        return new Empty();
     }
 }

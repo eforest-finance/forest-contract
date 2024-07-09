@@ -347,7 +347,7 @@ namespace Forest.Contracts.Auction
             {
                 Symbol = "SEED-2"
             });
-            result.TransactionResult.Error.ShouldContain("Only support 721 type NFT.");
+            result.TransactionResult.Error.ShouldContain("Invalid input auction type.");
 
             result = await AuctionContractStub.CreateAuction.SendWithExceptionAsync(new CreateAuctionInput
             {
@@ -904,7 +904,7 @@ namespace Forest.Contracts.Auction
                 Issuer = DefaultAddress,
                 Symbol = "SEED-2",
                 TokenName = "SEED-TEST",
-                TotalSupply = 2,
+                TotalSupply = 1,
                 Decimals = 0,
                 IsBurnable = true,
                 LockWhiteList = { TokenContractAddress },

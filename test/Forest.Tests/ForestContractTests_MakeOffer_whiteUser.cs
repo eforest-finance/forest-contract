@@ -1936,7 +1936,7 @@ public partial class ForestContractTests_MakeOffer : ForestContractTestBase
                 Duration = new ListWithFixedPriceDuration()
                 {
                     // start 5min ago
-                    StartTime = Timestamp.FromDateTime(DateTime.UtcNow).AddSeconds(-2),
+                    StartTime = Timestamp.FromDateTime(DateTime.UtcNow).AddSeconds(-20),
                     // public 10min after
                     PublicTime = Timestamp.FromDateTime(DateTime.UtcNow).AddSeconds(-2),
                     DurationMinutes = 1 * 60,
@@ -2192,7 +2192,7 @@ public partial class ForestContractTests_MakeOffer : ForestContractTestBase
             try
             {
                 await UserTokenContractStub.Approve.SendAsync(new ApproveInput() { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = 1 });
-                await User2TokenContractStub.Approve.SendAsync(new ApproveInput() { Spender = ForestContractAddress, Symbol = whitePrice.Symbol, Amount = sellPrice.Amount*2 });
+                await User2TokenContractStub.Approve.SendAsync(new ApproveInput() { Spender = ForestContractAddress, Symbol = whitePrice.Symbol, Amount = sellPrice.Amount-1 });
                 var executionResult = await BuyerForestContractStub.MakeOffer.SendAsync(new MakeOfferInput()
                 {
                     Symbol = NftSymbol,
@@ -2206,7 +2206,7 @@ public partial class ForestContractTests_MakeOffer : ForestContractTestBase
             {
                 errorMessage = e.Message;
             }
-            errorMessage.ShouldContain("[TransferFrom]Insufficient allowance");
+            errorMessage.ShouldContain("The allowance you set is less than required");
         }
         
         #endregion
