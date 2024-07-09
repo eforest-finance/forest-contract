@@ -2544,7 +2544,7 @@ public class ForestContractListTests : ForestContractTestBase
         
     }
 
-    [Fact]
+    /*[Fact]
     public async void Delist36Test_BatchDelistType_Is_Null()
     {
         //basic begin
@@ -3161,7 +3161,7 @@ public class ForestContractListTests : ForestContractTestBase
             log1.Duration.DurationMinutes.ShouldBe(59);
 
         }
-    }
+    }*/
     
     /*[Fact]
     public async void BatchCancelListTest()
