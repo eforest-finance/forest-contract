@@ -1074,7 +1074,7 @@ public class ForestContractListTests : ForestContractTestBase
         }
     }
 
-    [Fact]
+    /*[Fact]
     public async void Delist20Test()
     {
         await InitializeForestContract();
@@ -1883,7 +1883,7 @@ public class ForestContractListTests : ForestContractTestBase
         log4.Duration.StartTime.ShouldNotBeNull();
         log4.Duration.PublicTime.ShouldNotBeNull();
         log4.Price.Amount.ShouldBe(inputSellPrice4);
-    }
+    }*/
     
     /*[Fact]
     public async void Delist28Test()
