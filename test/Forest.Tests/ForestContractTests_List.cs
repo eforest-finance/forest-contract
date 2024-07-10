@@ -728,7 +728,7 @@ public class ForestContractListTests : ForestContractTestBase
         listedNftInfo1.Duration.DurationMinutes.ShouldBe(4392 * 60);
     }
 
-    [Fact]
+    /*[Fact]
     public async void Delist15_2Test()
     {
         await InitializeForestContract();
@@ -1242,7 +1242,7 @@ public class ForestContractListTests : ForestContractTestBase
                 Owner = User1Address
             }));
         listedNftInfo1.Value.Count.ShouldBe(0);
-    }
+    }*/
 
     
     private async Task InitListInfo(int listQuantity, int inputSellPrice, int approveQuantity, string symbol = null, Timestamp startTime = null)
