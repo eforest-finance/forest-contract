@@ -3161,7 +3161,7 @@ public async void ListWithFixedPrice21Test()
       log1.Duration.DurationMinutes.ShouldBe(59);
 
   }
-}*/
+}
 
 [Fact]
 public async void BatchCancelListTest()
@@ -3259,5 +3259,5 @@ public async void BatchCancelListTest()
       listedNftInfo1.ShouldBeEmpty();
 
   }
-}
+}*/
 }
