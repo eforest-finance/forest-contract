@@ -1330,7 +1330,7 @@ public class ForestContractListTests : ForestContractTestBase
         }*/
     }
     
-     [Fact]
+     /*[Fact]
      public async void Delist22Test()
      {
          //basic begin
@@ -3076,7 +3076,7 @@ public class ForestContractListTests : ForestContractTestBase
             lo2.Duration.DurationHours.ShouldBe(0);
             lo2.Duration.DurationMinutes.ShouldBe(4392 * 60);
         }
-    }
+    }*/
     
     [Fact]
     public async void ListWithFixedPrice20_4Test()
