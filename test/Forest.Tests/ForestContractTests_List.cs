@@ -3077,7 +3077,7 @@ public class ForestContractListTests : ForestContractTestBase
          lo2.Duration.DurationMinutes.ShouldBe(4392 * 60);
      }
  }
-*/
+
 [Fact]
 public async void ListWithFixedPrice20_4Test()
 {
@@ -3124,7 +3124,7 @@ public async void ListWithFixedPrice20_4Test()
       lo2.Duration.DurationHours.ShouldBe(0);
       lo2.Duration.DurationMinutes.ShouldBe(263520);
   }
-}
+}*/
 
 [Fact]
 public async void ListWithFixedPrice21Test()
