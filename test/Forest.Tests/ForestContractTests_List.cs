@@ -2440,7 +2440,7 @@ public class ForestContractListTests : ForestContractTestBase
         
     }
     
-    /* [Fact]
+     [Fact]
      public async void Delist35Test()
      {
          //basic begin
@@ -2491,61 +2491,8 @@ public class ForestContractListTests : ForestContractTestBase
          executionResult1.TransactionResult.Logs.Count.ShouldBe(0);
      }
  
-     [Fact]
-     public async void Delist36Test()
-     {
-         //basic begin
-         int approveQuantity = 0;
-         await InitializeForestContract();
-         await PrepareNftData();
- 
-         int inputListQuantity1 = 1;
-         int inputSellPrice1 = 2;
-         approveQuantity += inputListQuantity1;
-         await InitListInfo(inputListQuantity1, inputSellPrice1, approveQuantity);
-         await QueryLastByStartAscListInfo(inputListQuantity1, inputSellPrice1);
-         await QueryFirstByStartAscListInfo(inputListQuantity1, inputSellPrice1);
- 
-         int inputListQuantity2 = 2;
-         int inputSellPrice2 = 2;
-         approveQuantity += inputListQuantity2;
-         await InitListInfo(inputListQuantity2, inputSellPrice2, approveQuantity);
-         await QueryLastByStartAscListInfo(inputListQuantity2, inputSellPrice2);
-         await QueryFirstByStartAscListInfo(inputListQuantity1, inputSellPrice1);
- 
-         int inputListQuantity3 = 3;
-         int inputSellPrice3 = 4;
-         approveQuantity += inputListQuantity3;
-         await InitListInfo(inputListQuantity3, inputSellPrice3, approveQuantity);
-         await QueryLastByStartAscListInfo(inputListQuantity3, inputSellPrice3);
-         await QueryFirstByStartAscListInfo(inputListQuantity1, inputSellPrice1);
-         
-         int inputListQuantity4 = 5;
-         int inputSellPrice4 = 5;
-         approveQuantity += inputListQuantity4;
-         await InitListInfo(inputListQuantity4, inputSellPrice4, approveQuantity);
-         await QueryLastByStartAscListInfo(inputListQuantity4, inputSellPrice4);
-         await QueryFirstByStartAscListInfo(inputListQuantity1, inputSellPrice1);
-         //basic end
-         
-         Func<Task> act = () => Seller1ForestContractStub.BatchDeList.SendAsync(new BatchDeListInput
-         {
-             Symbol = NftSymbol,
-             Price = new Price()
-             {
-                 Symbol = "ELF",
-                 Amount = inputListQuantity1
-             },
-             BatchDelistType = ForestContract.BatchDeListTypeGreaterThanOrEquals+1
-         });
- 
-         var exception = await Assert.ThrowsAsync<Exception>(act);
-         exception.Message.ShouldContain("BatchDeListType not exists.");
-         
-     }
- 
-      [Fact]
-      public async void Delist36Test_BatchDelistType_Is_Null()
+     /* [Fact]
+      public async void Delist36Test()
       {
           //basic begin
           int approveQuantity = 0;
@@ -2581,502 +2528,555 @@ public class ForestContractListTests : ForestContractTestBase
           await QueryFirstByStartAscListInfo(inputListQuantity1, inputSellPrice1);
           //basic end
           
-          var executionResult1 = await Seller1ForestContractStub.BatchDeList.SendAsync(new BatchDeListInput
+          Func<Task> act = () => Seller1ForestContractStub.BatchDeList.SendAsync(new BatchDeListInput
           {
               Symbol = NftSymbol,
               Price = new Price()
               {
                   Symbol = "ELF",
-                  Amount = inputSellPrice3
+                  Amount = inputListQuantity1
               },
-              //BatchDelistType = ForestContract.BatchDeListTypeLessThan
+              BatchDelistType = ForestContract.BatchDeListTypeGreaterThanOrEquals+1
           });
-          await QueryLastByStartAscListInfo(inputListQuantity4, inputSellPrice4);
-          await QueryFirstByStartAscListInfo(inputListQuantity3, inputSellPrice3);
-          
-          executionResult1.TransactionResult.Logs.Count.ShouldBe(2);
-          
-          var log1 = ListedNFTRemoved.Parser
-              .ParseFrom(executionResult1.TransactionResult.Logs.First(l => l.Name == nameof(ListedNFTRemoved))
-                  .NonIndexed);
-          log1.Owner.ShouldBe(User1Address);
-          //log1.Quantity.ShouldBe(inputListQuantity1);
-          log1.Symbol.ShouldBe(NftSymbol);
-          log1.Duration.ShouldNotBeNull();
-          log1.Duration.DurationHours.ShouldBe(0);
-          log1.Duration.DurationMinutes.ShouldBe(4392 * 60);
-          log1.Duration.StartTime.ShouldNotBeNull();
-          log1.Duration.PublicTime.ShouldNotBeNull();
-          log1.Price.Amount.ShouldBe(inputSellPrice1);
-          
-          var log2 = ListedNFTRemoved.Parser
-              .ParseFrom(executionResult1.TransactionResult.Logs.Skip(1).First(l => l.Name == nameof(ListedNFTRemoved))
-                  .NonIndexed);
-          log2.Owner.ShouldBe(User1Address);
-          log2.Symbol.ShouldBe(NftSymbol);
-          log2.Duration.ShouldNotBeNull();
-          log2.Duration.DurationHours.ShouldBe(0);
-          log2.Duration.DurationMinutes.ShouldBe(4392 * 60);
-          log2.Duration.StartTime.ShouldNotBeNull();
-          log2.Duration.PublicTime.ShouldNotBeNull();
-          log2.Price.Amount.ShouldBe(inputSellPrice1);
-      }
-      
-      [Fact]
-      public async void TransferTest()
-      {
-          await InitializeForestContract();
-          await PrepareNftData();
-          {
-              {
-                  var balance1 = await TokenContractStub.GetBalance.CallAsync(
-                      new AElf.Contracts.MultiToken.GetBalanceInput
-                      {
-                          Symbol = NftSymbol,
-                          Owner = User1Address
-                      });
   
-                  var balance2 = await TokenContractStub.GetBalance.CallAsync(
-                      new AElf.Contracts.MultiToken.GetBalanceInput
-                      {
-                          Symbol = NftSymbol,
-                          Owner = User2Address
-                      });
-  
-                  var executionResult = await UserTokenContractStub.Transfer.SendAsync(new TransferInput()
-                  {
-                      To = User2Address,
-                      Symbol = NftSymbol,
-                      Amount = 2,
-                      Memo = "for you 2 nft ..."
-                  });
-                  var log1 = Transferred.Parser
-                      .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(Transferred))
-                          .NonIndexed);
-                  log1.Amount.ShouldBe(2);
-                  log1.Memo.ShouldBe("for you 2 nft ...");
-          
-  
-                  var balance3 = await TokenContractStub.GetBalance.CallAsync(
-                      new AElf.Contracts.MultiToken.GetBalanceInput
-                      {
-                          Symbol = NftSymbol,
-                          Owner = User2Address
-                      });
-  
-                  balance3.Balance.ShouldBe(2);
-              }
-          }
-      }
-  
-  
-      [Fact]
-      public async void DuplicateList()
-      {
-          await InitializeForestContract();
-          await PrepareNftData();
-          
-          // whitePrice < sellPrice < offerPrice
-          var sellPrice = Elf(5_0000_0000);
-          var whitePrice = Elf(2_0000_0000);
-  
-          // after publicTime
-          var startTime = Timestamp.FromDateTime(DateTime.UtcNow.AddHours(-5));
-          var publicTime = Timestamp.FromDateTime(DateTime.UtcNow.AddMinutes(-1));
-          var listQuantity = 5;
-          #region ListWithFixedPrice
-  
-          {
-              await UserTokenContractStub.Approve.SendAsync(new ApproveInput() { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity });
-  
-              await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(new ListWithFixedPriceInput()
-              {
-                  Symbol = NftSymbol,
-                  Quantity = listQuantity,
-                  IsWhitelistAvailable = false,
-                  Price = sellPrice,
-                  Duration = new ListWithFixedPriceDuration()
-                  {
-                      // start 1sec ago
-                      StartTime = startTime,
-                      // public 10min after
-                      PublicTime = publicTime,
-                      DurationMinutes = 1 * 60,
-                  },
-              });
-          }
-  
-          #endregion
-          
-          #region ListWithFixedPrice twice
-  
-          {
-              await UserTokenContractStub.Approve.SendAsync(new ApproveInput() { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity*2 });
-  
-              var exception = await Assert.ThrowsAsync<Exception>(
-                  () => Seller1ForestContractStub.ListWithFixedPrice.SendAsync(new ListWithFixedPriceInput()
-                  {
-                      Symbol = NftSymbol,
-                      Quantity = listQuantity,
-                      IsWhitelistAvailable = false,
-                      Price = sellPrice,
-                      Duration = new ListWithFixedPriceDuration()
-                      {
-                          // start 1sec ago
-                          StartTime = startTime,
-                          // public 10min after
-                          PublicTime = publicTime,
-                          DurationMinutes = 1 * 60,
-                      },
-                  })
-              );
-              exception.Message.ShouldContain("already exists");
-          }
-  
-          #endregion
+          var exception = await Assert.ThrowsAsync<Exception>(act);
+          exception.Message.ShouldContain("BatchDeListType not exists.");
           
       }
-      
-      [Fact]
-      //seller nft allownce not enough
-      public async void ListWithFixedPrice14Test()
-      {
-          await InitializeForestContract();
-          await PrepareNftData();
-          var sellPrice = Elf(3);
-          var listQuantity = 2;
-          {
-              await UserTokenContractStub.Approve.SendAsync(new ApproveInput() { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity-1 });
-              var errorMessage = "";
-              try
-              {
-                  await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(new ListWithFixedPriceInput
-                  {
-                      Symbol = NftSymbol,
-                      Quantity = listQuantity,
-                      IsWhitelistAvailable = true,
-                      Price = sellPrice
-                  });
   
-              }catch (Exception e)
-              {
-                  errorMessage = e.Message;
-              }
-              errorMessage.ShouldContain("The allowance you set is less than required. Please reset it.");
-          }
-      }
-      
-      [Fact]
-      //seller nft allownce equal enough
-      public async void ListWithFixedPrice15Test()
-      {
-          await InitializeForestContract();
-          await PrepareNftData();
-          var sellPrice = Elf(3);
-          var listQuantity = 2;
-          {
-              await UserTokenContractStub.Approve.SendAsync(new ApproveInput() { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity});
-              var executionResult = await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(new ListWithFixedPriceInput
-              {
-                  Symbol = NftSymbol,
-                  Quantity = listQuantity,
-                  IsWhitelistAvailable = true,
-                  Price = sellPrice
-              });
-              var log1 = ListedNFTAdded.Parser
-                  .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(ListedNFTAdded))
-                      .NonIndexed);
-              log1.Owner.ShouldBe(User1Address);
-              log1.Quantity.ShouldBe(listQuantity);
-              log1.Symbol.ShouldBe(NftSymbol);
-              log1.Price.Symbol.ShouldBe(ElfSymbol);
-              log1.Price.Amount.ShouldBe(sellPrice.Amount);
-              log1.Duration.StartTime.ShouldNotBeNull();
-          }
-      }
-      [Fact]
-      //seller nft allownce gretter enough
-      public async void ListWithFixedPrice16Test()
-      {
-          await InitializeForestContract();
-          await PrepareNftData();
-          var sellPrice = Elf(3);
-          var listQuantity = 2;
-          {
-              await UserTokenContractStub.Approve.SendAsync(new ApproveInput() { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity+1});
-              var executionResult = await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(new ListWithFixedPriceInput
-              {
-                  Symbol = NftSymbol,
-                  Quantity = listQuantity,
-                  IsWhitelistAvailable = true,
-                  Price = sellPrice
-              });
-              var log1 = ListedNFTAdded.Parser
-                  .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(ListedNFTAdded))
-                      .NonIndexed);
-              log1.Owner.ShouldBe(User1Address);
-              log1.Quantity.ShouldBe(listQuantity);
-              log1.Symbol.ShouldBe(NftSymbol);
-              log1.Price.Symbol.ShouldBe(ElfSymbol);
-              log1.Price.Amount.ShouldBe(sellPrice.Amount);
-              log1.Duration.StartTime.ShouldNotBeNull();
-              log1.Duration.DurationHours.ShouldBe(0);
-              log1.Duration.DurationMinutes.ShouldBe(4392 * 60);
-          }
-      }
-      
-      [Fact]
-      public async void ListWithFixedPrice17Test()
-      {
-          await InitializeForestContract();
-          await PrepareNftData();
-          var sellPrice = Elf(3);
-          var listQuantity = 2;
-          {
-              await UserTokenContractStub.Approve.SendAsync(new ApproveInput() { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity+1});
-              var executionResult = await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(new ListWithFixedPriceInput
-              {
-                  Symbol = NftSymbol,
-                  Quantity = listQuantity,
-                  IsWhitelistAvailable = true,
-                  Price = sellPrice,
-                  Duration = new ListWithFixedPriceDuration()
-                  {
-                      DurationMinutes = -1 * 60
-                  }
-              });
-              var log1 = ListedNFTAdded.Parser
-                  .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(ListedNFTAdded))
-                      .NonIndexed);
-              log1.Owner.ShouldBe(User1Address);
-              log1.Quantity.ShouldBe(listQuantity);
-              log1.Symbol.ShouldBe(NftSymbol);
-              log1.Price.Symbol.ShouldBe(ElfSymbol);
-              log1.Price.Amount.ShouldBe(sellPrice.Amount);
-              log1.Duration.StartTime.ShouldNotBeNull();
-              log1.Duration.DurationHours.ShouldBe(0);
-              log1.Duration.DurationMinutes.ShouldBe(4392 * 60);
-              
-          }
-      }
-  
-      [Fact]
-      public async void ListWithFixedPrice18Test()
-      {
-          await InitializeForestContract();
-          await PrepareNftData();
-          var sellPrice = Elf(3);
-          var listQuantity = 2;
-          {
-              await UserTokenContractStub.Approve.SendAsync(new ApproveInput()
-                  { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity + 1 });
-              var executionResult = await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(
-                  new ListWithFixedPriceInput
-                  {
-                      Symbol = NftSymbol,
-                      Quantity = listQuantity,
-                      IsWhitelistAvailable = true,
-                      Price = sellPrice,
-                      Duration = new ListWithFixedPriceDuration()
-                      {
-                          DurationMinutes = 60
-                      }
-                  });
-              var log1 = ListedNFTAdded.Parser
-                  .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(ListedNFTAdded))
-                      .NonIndexed);
-              log1.Owner.ShouldBe(User1Address);
-              log1.Quantity.ShouldBe(listQuantity);
-              log1.Symbol.ShouldBe(NftSymbol);
-              log1.Price.Symbol.ShouldBe(ElfSymbol);
-              log1.Price.Amount.ShouldBe(sellPrice.Amount);
-              log1.Duration.StartTime.ShouldNotBeNull();
-              log1.Duration.DurationHours.ShouldBe(0);
-              log1.Duration.DurationMinutes.ShouldBe(60);
-  
-          }
-      }
-      
-      [Fact]
-      public async void ListWithFixedPrice19Test()
-      {
-          await InitializeForestContract();
-          await PrepareNftData();
-          var sellPrice = Elf(3);
-          var listQuantity = 2;
-          {
-              await UserTokenContractStub.Approve.SendAsync(new ApproveInput()
-                  { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity + 1 });
-              var executionResult = await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(
-                  new ListWithFixedPriceInput
-                  {
-                      Symbol = NftSymbol,
-                      Quantity = listQuantity,
-                      IsWhitelistAvailable = true,
-                      Price = sellPrice,
-                      Duration = new ListWithFixedPriceDuration()
-                      {
-                          DurationMinutes = 59
-                      }
-                  });
-              var log1 = ListedNFTAdded.Parser
-                  .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(ListedNFTAdded))
-                      .NonIndexed);
-              log1.Owner.ShouldBe(User1Address);
-              log1.Quantity.ShouldBe(listQuantity);
-              log1.Symbol.ShouldBe(NftSymbol);
-              log1.Price.Symbol.ShouldBe(ElfSymbol);
-              log1.Price.Amount.ShouldBe(sellPrice.Amount);
-              log1.Duration.StartTime.ShouldNotBeNull();
-              log1.Duration.DurationHours.ShouldBe(0);
-              log1.Duration.DurationMinutes.ShouldBe(59);
-  
-          }
-      }
-      
-      [Fact]
-      public async void ListWithFixedPrice20Test()
-      {
-          await InitializeForestContract();
-          await PrepareNftData();
-          var sellPrice = Elf(3);
-          var listQuantity = 2;
-          {
-              await UserTokenContractStub.Approve.SendAsync(new ApproveInput()
-                  { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity + 1 });
-              var executionResult = await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(
-                  new ListWithFixedPriceInput
-                  {
-                      Symbol = NftSymbol,
-                      Quantity = listQuantity,
-                      IsWhitelistAvailable = true,
-                      Price = sellPrice,
-                      Duration = new ListWithFixedPriceDuration()
-                      {
-                          DurationMinutes = 59
-                      }
-                  });
-              var log1 = ListedNFTAdded.Parser
-                  .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(ListedNFTAdded))
-                      .NonIndexed);
-              log1.Owner.ShouldBe(User1Address);
-              log1.Quantity.ShouldBe(listQuantity);
-              log1.Symbol.ShouldBe(NftSymbol);
-              log1.Price.Symbol.ShouldBe(ElfSymbol);
-              log1.Price.Amount.ShouldBe(sellPrice.Amount);
-              log1.Duration.StartTime.ShouldNotBeNull();
-              log1.Duration.DurationHours.ShouldBe(0);
-              log1.Duration.DurationMinutes.ShouldBe(59);
-              
-              var lo2 = FixedPriceNFTListed.Parser
-                  .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(FixedPriceNFTListed))
-                      .NonIndexed);
-              lo2.Owner.ShouldBe(User1Address);
-              lo2.Quantity.ShouldBe(listQuantity);
-              lo2.Symbol.ShouldBe(NftSymbol);
-              lo2.Price.Symbol.ShouldBe(ElfSymbol);
-              lo2.Price.Amount.ShouldBe(sellPrice.Amount);
-              lo2.Duration.StartTime.ShouldNotBeNull();
-              lo2.Duration.DurationHours.ShouldBe(0);
-              lo2.Duration.DurationMinutes.ShouldBe(59);
-          }
-      }
-      
-      [Fact]
-      public async void ListWithFixedPrice20_2Test()
-      {
-          await InitializeForestContract();
-          await PrepareNftData();
-          var sellPrice = Elf(3);
-          var listQuantity = 2;
-          {
-              await UserTokenContractStub.Approve.SendAsync(new ApproveInput()
-                  { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity + 1 });
-              var executionResult = await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(
-                  new ListWithFixedPriceInput
-                  {
-                      Symbol = NftSymbol,
-                      Quantity = listQuantity,
-                      IsWhitelistAvailable = true,
-                      Price = sellPrice,
-                      Duration = new ListWithFixedPriceDuration()
-                      {
-                          DurationMinutes = -1
-                      }
-                  });
-              var log1 = ListedNFTAdded.Parser
-                  .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(ListedNFTAdded))
-                      .NonIndexed);
-              log1.Owner.ShouldBe(User1Address);
-              log1.Quantity.ShouldBe(listQuantity);
-              log1.Symbol.ShouldBe(NftSymbol);
-              log1.Price.Symbol.ShouldBe(ElfSymbol);
-              log1.Price.Amount.ShouldBe(sellPrice.Amount);
-              log1.Duration.StartTime.ShouldNotBeNull();
-              log1.Duration.DurationHours.ShouldBe(0);
-              log1.Duration.DurationMinutes.ShouldBe(4392 * 60);
-              
-              var lo2 = FixedPriceNFTListed.Parser
-                  .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(FixedPriceNFTListed))
-                      .NonIndexed);
-              lo2.Owner.ShouldBe(User1Address);
-              lo2.Quantity.ShouldBe(listQuantity);
-              lo2.Symbol.ShouldBe(NftSymbol);
-              lo2.Price.Symbol.ShouldBe(ElfSymbol);
-              lo2.Price.Amount.ShouldBe(sellPrice.Amount);
-              lo2.Duration.StartTime.ShouldNotBeNull();
-              lo2.Duration.DurationHours.ShouldBe(0);
-              lo2.Duration.DurationMinutes.ShouldBe(4392 * 60);
-          }
-      }
-      
-      [Fact]
-      public async void ListWithFixedPrice20_3Test()
-      {
-          await InitializeForestContract();
-          await PrepareNftData();
-          var sellPrice = Elf(3);
-          var listQuantity = 2;
-          {
-              await UserTokenContractStub.Approve.SendAsync(new ApproveInput()
-                  { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity + 1 });
-              var executionResult = await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(
-                  new ListWithFixedPriceInput
-                  {
-                      Symbol = NftSymbol,
-                      Quantity = listQuantity,
-                      IsWhitelistAvailable = true,
-                      Price = sellPrice,
-                      Duration = new ListWithFixedPriceDuration()
-                      {
-                          DurationMinutes = 0
-                      }
-                  });
-              var log1 = ListedNFTAdded.Parser
-                  .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(ListedNFTAdded))
-                      .NonIndexed);
-              log1.Owner.ShouldBe(User1Address);
-              log1.Quantity.ShouldBe(listQuantity);
-              log1.Symbol.ShouldBe(NftSymbol);
-              log1.Price.Symbol.ShouldBe(ElfSymbol);
-              log1.Price.Amount.ShouldBe(sellPrice.Amount);
-              log1.Duration.StartTime.ShouldNotBeNull();
-              log1.Duration.DurationHours.ShouldBe(0);
-              log1.Duration.DurationMinutes.ShouldBe(4392 * 60);
-              
-              var lo2 = FixedPriceNFTListed.Parser
-                  .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(FixedPriceNFTListed))
-                      .NonIndexed);
-              lo2.Owner.ShouldBe(User1Address);
-              lo2.Quantity.ShouldBe(listQuantity);
-              lo2.Symbol.ShouldBe(NftSymbol);
-              lo2.Price.Symbol.ShouldBe(ElfSymbol);
-              lo2.Price.Amount.ShouldBe(sellPrice.Amount);
-              lo2.Duration.StartTime.ShouldNotBeNull();
-              lo2.Duration.DurationHours.ShouldBe(0);
-              lo2.Duration.DurationMinutes.ShouldBe(4392 * 60);
-          }
-      }*/
+       [Fact]
+       public async void Delist36Test_BatchDelistType_Is_Null()
+       {
+           //basic begin
+           int approveQuantity = 0;
+           await InitializeForestContract();
+           await PrepareNftData();
+   
+           int inputListQuantity1 = 1;
+           int inputSellPrice1 = 2;
+           approveQuantity += inputListQuantity1;
+           await InitListInfo(inputListQuantity1, inputSellPrice1, approveQuantity);
+           await QueryLastByStartAscListInfo(inputListQuantity1, inputSellPrice1);
+           await QueryFirstByStartAscListInfo(inputListQuantity1, inputSellPrice1);
+   
+           int inputListQuantity2 = 2;
+           int inputSellPrice2 = 2;
+           approveQuantity += inputListQuantity2;
+           await InitListInfo(inputListQuantity2, inputSellPrice2, approveQuantity);
+           await QueryLastByStartAscListInfo(inputListQuantity2, inputSellPrice2);
+           await QueryFirstByStartAscListInfo(inputListQuantity1, inputSellPrice1);
+   
+           int inputListQuantity3 = 3;
+           int inputSellPrice3 = 4;
+           approveQuantity += inputListQuantity3;
+           await InitListInfo(inputListQuantity3, inputSellPrice3, approveQuantity);
+           await QueryLastByStartAscListInfo(inputListQuantity3, inputSellPrice3);
+           await QueryFirstByStartAscListInfo(inputListQuantity1, inputSellPrice1);
+           
+           int inputListQuantity4 = 5;
+           int inputSellPrice4 = 5;
+           approveQuantity += inputListQuantity4;
+           await InitListInfo(inputListQuantity4, inputSellPrice4, approveQuantity);
+           await QueryLastByStartAscListInfo(inputListQuantity4, inputSellPrice4);
+           await QueryFirstByStartAscListInfo(inputListQuantity1, inputSellPrice1);
+           //basic end
+           
+           var executionResult1 = await Seller1ForestContractStub.BatchDeList.SendAsync(new BatchDeListInput
+           {
+               Symbol = NftSymbol,
+               Price = new Price()
+               {
+                   Symbol = "ELF",
+                   Amount = inputSellPrice3
+               },
+               //BatchDelistType = ForestContract.BatchDeListTypeLessThan
+           });
+           await QueryLastByStartAscListInfo(inputListQuantity4, inputSellPrice4);
+           await QueryFirstByStartAscListInfo(inputListQuantity3, inputSellPrice3);
+           
+           executionResult1.TransactionResult.Logs.Count.ShouldBe(2);
+           
+           var log1 = ListedNFTRemoved.Parser
+               .ParseFrom(executionResult1.TransactionResult.Logs.First(l => l.Name == nameof(ListedNFTRemoved))
+                   .NonIndexed);
+           log1.Owner.ShouldBe(User1Address);
+           //log1.Quantity.ShouldBe(inputListQuantity1);
+           log1.Symbol.ShouldBe(NftSymbol);
+           log1.Duration.ShouldNotBeNull();
+           log1.Duration.DurationHours.ShouldBe(0);
+           log1.Duration.DurationMinutes.ShouldBe(4392 * 60);
+           log1.Duration.StartTime.ShouldNotBeNull();
+           log1.Duration.PublicTime.ShouldNotBeNull();
+           log1.Price.Amount.ShouldBe(inputSellPrice1);
+           
+           var log2 = ListedNFTRemoved.Parser
+               .ParseFrom(executionResult1.TransactionResult.Logs.Skip(1).First(l => l.Name == nameof(ListedNFTRemoved))
+                   .NonIndexed);
+           log2.Owner.ShouldBe(User1Address);
+           log2.Symbol.ShouldBe(NftSymbol);
+           log2.Duration.ShouldNotBeNull();
+           log2.Duration.DurationHours.ShouldBe(0);
+           log2.Duration.DurationMinutes.ShouldBe(4392 * 60);
+           log2.Duration.StartTime.ShouldNotBeNull();
+           log2.Duration.PublicTime.ShouldNotBeNull();
+           log2.Price.Amount.ShouldBe(inputSellPrice1);
+       }
+       
+       [Fact]
+       public async void TransferTest()
+       {
+           await InitializeForestContract();
+           await PrepareNftData();
+           {
+               {
+                   var balance1 = await TokenContractStub.GetBalance.CallAsync(
+                       new AElf.Contracts.MultiToken.GetBalanceInput
+                       {
+                           Symbol = NftSymbol,
+                           Owner = User1Address
+                       });
+   
+                   var balance2 = await TokenContractStub.GetBalance.CallAsync(
+                       new AElf.Contracts.MultiToken.GetBalanceInput
+                       {
+                           Symbol = NftSymbol,
+                           Owner = User2Address
+                       });
+   
+                   var executionResult = await UserTokenContractStub.Transfer.SendAsync(new TransferInput()
+                   {
+                       To = User2Address,
+                       Symbol = NftSymbol,
+                       Amount = 2,
+                       Memo = "for you 2 nft ..."
+                   });
+                   var log1 = Transferred.Parser
+                       .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(Transferred))
+                           .NonIndexed);
+                   log1.Amount.ShouldBe(2);
+                   log1.Memo.ShouldBe("for you 2 nft ...");
+           
+   
+                   var balance3 = await TokenContractStub.GetBalance.CallAsync(
+                       new AElf.Contracts.MultiToken.GetBalanceInput
+                       {
+                           Symbol = NftSymbol,
+                           Owner = User2Address
+                       });
+   
+                   balance3.Balance.ShouldBe(2);
+               }
+           }
+       }
+   
+   
+       [Fact]
+       public async void DuplicateList()
+       {
+           await InitializeForestContract();
+           await PrepareNftData();
+           
+           // whitePrice < sellPrice < offerPrice
+           var sellPrice = Elf(5_0000_0000);
+           var whitePrice = Elf(2_0000_0000);
+   
+           // after publicTime
+           var startTime = Timestamp.FromDateTime(DateTime.UtcNow.AddHours(-5));
+           var publicTime = Timestamp.FromDateTime(DateTime.UtcNow.AddMinutes(-1));
+           var listQuantity = 5;
+           #region ListWithFixedPrice
+   
+           {
+               await UserTokenContractStub.Approve.SendAsync(new ApproveInput() { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity });
+   
+               await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(new ListWithFixedPriceInput()
+               {
+                   Symbol = NftSymbol,
+                   Quantity = listQuantity,
+                   IsWhitelistAvailable = false,
+                   Price = sellPrice,
+                   Duration = new ListWithFixedPriceDuration()
+                   {
+                       // start 1sec ago
+                       StartTime = startTime,
+                       // public 10min after
+                       PublicTime = publicTime,
+                       DurationMinutes = 1 * 60,
+                   },
+               });
+           }
+   
+           #endregion
+           
+           #region ListWithFixedPrice twice
+   
+           {
+               await UserTokenContractStub.Approve.SendAsync(new ApproveInput() { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity*2 });
+   
+               var exception = await Assert.ThrowsAsync<Exception>(
+                   () => Seller1ForestContractStub.ListWithFixedPrice.SendAsync(new ListWithFixedPriceInput()
+                   {
+                       Symbol = NftSymbol,
+                       Quantity = listQuantity,
+                       IsWhitelistAvailable = false,
+                       Price = sellPrice,
+                       Duration = new ListWithFixedPriceDuration()
+                       {
+                           // start 1sec ago
+                           StartTime = startTime,
+                           // public 10min after
+                           PublicTime = publicTime,
+                           DurationMinutes = 1 * 60,
+                       },
+                   })
+               );
+               exception.Message.ShouldContain("already exists");
+           }
+   
+           #endregion
+           
+       }
+       
+       [Fact]
+       //seller nft allownce not enough
+       public async void ListWithFixedPrice14Test()
+       {
+           await InitializeForestContract();
+           await PrepareNftData();
+           var sellPrice = Elf(3);
+           var listQuantity = 2;
+           {
+               await UserTokenContractStub.Approve.SendAsync(new ApproveInput() { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity-1 });
+               var errorMessage = "";
+               try
+               {
+                   await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(new ListWithFixedPriceInput
+                   {
+                       Symbol = NftSymbol,
+                       Quantity = listQuantity,
+                       IsWhitelistAvailable = true,
+                       Price = sellPrice
+                   });
+   
+               }catch (Exception e)
+               {
+                   errorMessage = e.Message;
+               }
+               errorMessage.ShouldContain("The allowance you set is less than required. Please reset it.");
+           }
+       }
+       
+       [Fact]
+       //seller nft allownce equal enough
+       public async void ListWithFixedPrice15Test()
+       {
+           await InitializeForestContract();
+           await PrepareNftData();
+           var sellPrice = Elf(3);
+           var listQuantity = 2;
+           {
+               await UserTokenContractStub.Approve.SendAsync(new ApproveInput() { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity});
+               var executionResult = await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(new ListWithFixedPriceInput
+               {
+                   Symbol = NftSymbol,
+                   Quantity = listQuantity,
+                   IsWhitelistAvailable = true,
+                   Price = sellPrice
+               });
+               var log1 = ListedNFTAdded.Parser
+                   .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(ListedNFTAdded))
+                       .NonIndexed);
+               log1.Owner.ShouldBe(User1Address);
+               log1.Quantity.ShouldBe(listQuantity);
+               log1.Symbol.ShouldBe(NftSymbol);
+               log1.Price.Symbol.ShouldBe(ElfSymbol);
+               log1.Price.Amount.ShouldBe(sellPrice.Amount);
+               log1.Duration.StartTime.ShouldNotBeNull();
+           }
+       }
+       [Fact]
+       //seller nft allownce gretter enough
+       public async void ListWithFixedPrice16Test()
+       {
+           await InitializeForestContract();
+           await PrepareNftData();
+           var sellPrice = Elf(3);
+           var listQuantity = 2;
+           {
+               await UserTokenContractStub.Approve.SendAsync(new ApproveInput() { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity+1});
+               var executionResult = await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(new ListWithFixedPriceInput
+               {
+                   Symbol = NftSymbol,
+                   Quantity = listQuantity,
+                   IsWhitelistAvailable = true,
+                   Price = sellPrice
+               });
+               var log1 = ListedNFTAdded.Parser
+                   .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(ListedNFTAdded))
+                       .NonIndexed);
+               log1.Owner.ShouldBe(User1Address);
+               log1.Quantity.ShouldBe(listQuantity);
+               log1.Symbol.ShouldBe(NftSymbol);
+               log1.Price.Symbol.ShouldBe(ElfSymbol);
+               log1.Price.Amount.ShouldBe(sellPrice.Amount);
+               log1.Duration.StartTime.ShouldNotBeNull();
+               log1.Duration.DurationHours.ShouldBe(0);
+               log1.Duration.DurationMinutes.ShouldBe(4392 * 60);
+           }
+       }
+       
+       [Fact]
+       public async void ListWithFixedPrice17Test()
+       {
+           await InitializeForestContract();
+           await PrepareNftData();
+           var sellPrice = Elf(3);
+           var listQuantity = 2;
+           {
+               await UserTokenContractStub.Approve.SendAsync(new ApproveInput() { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity+1});
+               var executionResult = await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(new ListWithFixedPriceInput
+               {
+                   Symbol = NftSymbol,
+                   Quantity = listQuantity,
+                   IsWhitelistAvailable = true,
+                   Price = sellPrice,
+                   Duration = new ListWithFixedPriceDuration()
+                   {
+                       DurationMinutes = -1 * 60
+                   }
+               });
+               var log1 = ListedNFTAdded.Parser
+                   .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(ListedNFTAdded))
+                       .NonIndexed);
+               log1.Owner.ShouldBe(User1Address);
+               log1.Quantity.ShouldBe(listQuantity);
+               log1.Symbol.ShouldBe(NftSymbol);
+               log1.Price.Symbol.ShouldBe(ElfSymbol);
+               log1.Price.Amount.ShouldBe(sellPrice.Amount);
+               log1.Duration.StartTime.ShouldNotBeNull();
+               log1.Duration.DurationHours.ShouldBe(0);
+               log1.Duration.DurationMinutes.ShouldBe(4392 * 60);
+               
+           }
+       }
+   
+       [Fact]
+       public async void ListWithFixedPrice18Test()
+       {
+           await InitializeForestContract();
+           await PrepareNftData();
+           var sellPrice = Elf(3);
+           var listQuantity = 2;
+           {
+               await UserTokenContractStub.Approve.SendAsync(new ApproveInput()
+                   { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity + 1 });
+               var executionResult = await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(
+                   new ListWithFixedPriceInput
+                   {
+                       Symbol = NftSymbol,
+                       Quantity = listQuantity,
+                       IsWhitelistAvailable = true,
+                       Price = sellPrice,
+                       Duration = new ListWithFixedPriceDuration()
+                       {
+                           DurationMinutes = 60
+                       }
+                   });
+               var log1 = ListedNFTAdded.Parser
+                   .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(ListedNFTAdded))
+                       .NonIndexed);
+               log1.Owner.ShouldBe(User1Address);
+               log1.Quantity.ShouldBe(listQuantity);
+               log1.Symbol.ShouldBe(NftSymbol);
+               log1.Price.Symbol.ShouldBe(ElfSymbol);
+               log1.Price.Amount.ShouldBe(sellPrice.Amount);
+               log1.Duration.StartTime.ShouldNotBeNull();
+               log1.Duration.DurationHours.ShouldBe(0);
+               log1.Duration.DurationMinutes.ShouldBe(60);
+   
+           }
+       }
+       
+       [Fact]
+       public async void ListWithFixedPrice19Test()
+       {
+           await InitializeForestContract();
+           await PrepareNftData();
+           var sellPrice = Elf(3);
+           var listQuantity = 2;
+           {
+               await UserTokenContractStub.Approve.SendAsync(new ApproveInput()
+                   { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity + 1 });
+               var executionResult = await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(
+                   new ListWithFixedPriceInput
+                   {
+                       Symbol = NftSymbol,
+                       Quantity = listQuantity,
+                       IsWhitelistAvailable = true,
+                       Price = sellPrice,
+                       Duration = new ListWithFixedPriceDuration()
+                       {
+                           DurationMinutes = 59
+                       }
+                   });
+               var log1 = ListedNFTAdded.Parser
+                   .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(ListedNFTAdded))
+                       .NonIndexed);
+               log1.Owner.ShouldBe(User1Address);
+               log1.Quantity.ShouldBe(listQuantity);
+               log1.Symbol.ShouldBe(NftSymbol);
+               log1.Price.Symbol.ShouldBe(ElfSymbol);
+               log1.Price.Amount.ShouldBe(sellPrice.Amount);
+               log1.Duration.StartTime.ShouldNotBeNull();
+               log1.Duration.DurationHours.ShouldBe(0);
+               log1.Duration.DurationMinutes.ShouldBe(59);
+   
+           }
+       }
+       
+       [Fact]
+       public async void ListWithFixedPrice20Test()
+       {
+           await InitializeForestContract();
+           await PrepareNftData();
+           var sellPrice = Elf(3);
+           var listQuantity = 2;
+           {
+               await UserTokenContractStub.Approve.SendAsync(new ApproveInput()
+                   { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity + 1 });
+               var executionResult = await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(
+                   new ListWithFixedPriceInput
+                   {
+                       Symbol = NftSymbol,
+                       Quantity = listQuantity,
+                       IsWhitelistAvailable = true,
+                       Price = sellPrice,
+                       Duration = new ListWithFixedPriceDuration()
+                       {
+                           DurationMinutes = 59
+                       }
+                   });
+               var log1 = ListedNFTAdded.Parser
+                   .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(ListedNFTAdded))
+                       .NonIndexed);
+               log1.Owner.ShouldBe(User1Address);
+               log1.Quantity.ShouldBe(listQuantity);
+               log1.Symbol.ShouldBe(NftSymbol);
+               log1.Price.Symbol.ShouldBe(ElfSymbol);
+               log1.Price.Amount.ShouldBe(sellPrice.Amount);
+               log1.Duration.StartTime.ShouldNotBeNull();
+               log1.Duration.DurationHours.ShouldBe(0);
+               log1.Duration.DurationMinutes.ShouldBe(59);
+               
+               var lo2 = FixedPriceNFTListed.Parser
+                   .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(FixedPriceNFTListed))
+                       .NonIndexed);
+               lo2.Owner.ShouldBe(User1Address);
+               lo2.Quantity.ShouldBe(listQuantity);
+               lo2.Symbol.ShouldBe(NftSymbol);
+               lo2.Price.Symbol.ShouldBe(ElfSymbol);
+               lo2.Price.Amount.ShouldBe(sellPrice.Amount);
+               lo2.Duration.StartTime.ShouldNotBeNull();
+               lo2.Duration.DurationHours.ShouldBe(0);
+               lo2.Duration.DurationMinutes.ShouldBe(59);
+           }
+       }
+       
+       [Fact]
+       public async void ListWithFixedPrice20_2Test()
+       {
+           await InitializeForestContract();
+           await PrepareNftData();
+           var sellPrice = Elf(3);
+           var listQuantity = 2;
+           {
+               await UserTokenContractStub.Approve.SendAsync(new ApproveInput()
+                   { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity + 1 });
+               var executionResult = await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(
+                   new ListWithFixedPriceInput
+                   {
+                       Symbol = NftSymbol,
+                       Quantity = listQuantity,
+                       IsWhitelistAvailable = true,
+                       Price = sellPrice,
+                       Duration = new ListWithFixedPriceDuration()
+                       {
+                           DurationMinutes = -1
+                       }
+                   });
+               var log1 = ListedNFTAdded.Parser
+                   .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(ListedNFTAdded))
+                       .NonIndexed);
+               log1.Owner.ShouldBe(User1Address);
+               log1.Quantity.ShouldBe(listQuantity);
+               log1.Symbol.ShouldBe(NftSymbol);
+               log1.Price.Symbol.ShouldBe(ElfSymbol);
+               log1.Price.Amount.ShouldBe(sellPrice.Amount);
+               log1.Duration.StartTime.ShouldNotBeNull();
+               log1.Duration.DurationHours.ShouldBe(0);
+               log1.Duration.DurationMinutes.ShouldBe(4392 * 60);
+               
+               var lo2 = FixedPriceNFTListed.Parser
+                   .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(FixedPriceNFTListed))
+                       .NonIndexed);
+               lo2.Owner.ShouldBe(User1Address);
+               lo2.Quantity.ShouldBe(listQuantity);
+               lo2.Symbol.ShouldBe(NftSymbol);
+               lo2.Price.Symbol.ShouldBe(ElfSymbol);
+               lo2.Price.Amount.ShouldBe(sellPrice.Amount);
+               lo2.Duration.StartTime.ShouldNotBeNull();
+               lo2.Duration.DurationHours.ShouldBe(0);
+               lo2.Duration.DurationMinutes.ShouldBe(4392 * 60);
+           }
+       }
+       
+       [Fact]
+       public async void ListWithFixedPrice20_3Test()
+       {
+           await InitializeForestContract();
+           await PrepareNftData();
+           var sellPrice = Elf(3);
+           var listQuantity = 2;
+           {
+               await UserTokenContractStub.Approve.SendAsync(new ApproveInput()
+                   { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = listQuantity + 1 });
+               var executionResult = await Seller1ForestContractStub.ListWithFixedPrice.SendAsync(
+                   new ListWithFixedPriceInput
+                   {
+                       Symbol = NftSymbol,
+                       Quantity = listQuantity,
+                       IsWhitelistAvailable = true,
+                       Price = sellPrice,
+                       Duration = new ListWithFixedPriceDuration()
+                       {
+                           DurationMinutes = 0
+                       }
+                   });
+               var log1 = ListedNFTAdded.Parser
+                   .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(ListedNFTAdded))
+                       .NonIndexed);
+               log1.Owner.ShouldBe(User1Address);
+               log1.Quantity.ShouldBe(listQuantity);
+               log1.Symbol.ShouldBe(NftSymbol);
+               log1.Price.Symbol.ShouldBe(ElfSymbol);
+               log1.Price.Amount.ShouldBe(sellPrice.Amount);
+               log1.Duration.StartTime.ShouldNotBeNull();
+               log1.Duration.DurationHours.ShouldBe(0);
+               log1.Duration.DurationMinutes.ShouldBe(4392 * 60);
+               
+               var lo2 = FixedPriceNFTListed.Parser
+                   .ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(FixedPriceNFTListed))
+                       .NonIndexed);
+               lo2.Owner.ShouldBe(User1Address);
+               lo2.Quantity.ShouldBe(listQuantity);
+               lo2.Symbol.ShouldBe(NftSymbol);
+               lo2.Price.Symbol.ShouldBe(ElfSymbol);
+               lo2.Price.Amount.ShouldBe(sellPrice.Amount);
+               lo2.Duration.StartTime.ShouldNotBeNull();
+               lo2.Duration.DurationHours.ShouldBe(0);
+               lo2.Duration.DurationMinutes.ShouldBe(4392 * 60);
+           }
+       }*/
     
     /*[Fact]
     public async void ListWithFixedPrice20_4Test()
