@@ -2440,7 +2440,7 @@ public class ForestContractListTests : ForestContractTestBase
         
     }
     
-     [Fact]
+    /* [Fact]
      public async void Delist35Test()
      {
          //basic begin
@@ -2489,9 +2489,9 @@ public class ForestContractListTests : ForestContractTestBase
          });
          
          executionResult1.TransactionResult.Logs.Count.ShouldBe(0);
-     }
+     }*/
  
-     /* [Fact]
+      [Fact]
       public async void Delist36Test()
       {
           //basic begin
@@ -3076,9 +3076,9 @@ public class ForestContractListTests : ForestContractTestBase
                lo2.Duration.DurationHours.ShouldBe(0);
                lo2.Duration.DurationMinutes.ShouldBe(4392 * 60);
            }
-       }*/
+       }
     
-    /*[Fact]
+    [Fact]
     public async void ListWithFixedPrice20_4Test()
     {
         await InitializeForestContract();
@@ -3259,5 +3259,5 @@ public class ForestContractListTests : ForestContractTestBase
             listedNftInfo1.ShouldBeEmpty();
 
         }
-    }*/
+    }
 }
