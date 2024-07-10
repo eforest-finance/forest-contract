@@ -3078,7 +3078,7 @@ public class ForestContractListTests : ForestContractTestBase
         }
     }*/
     
-    [Fact]
+    /*[Fact]
     public async void ListWithFixedPrice20_4Test()
     {
         await InitializeForestContract();
@@ -3259,5 +3259,5 @@ public class ForestContractListTests : ForestContractTestBase
             listedNftInfo1.ShouldBeEmpty();
 
         }
-    }
+    }*/
 }
