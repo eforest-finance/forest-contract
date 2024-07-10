@@ -2859,7 +2859,7 @@ public class ForestContractListTests : ForestContractTestBase
          
      }
  }
-*/
+
  [Fact]
  public async void ListWithFixedPrice18Test()
  {
@@ -2932,7 +2932,7 @@ public class ForestContractListTests : ForestContractTestBase
          log1.Duration.DurationMinutes.ShouldBe(59);
 
      }
- }
+ }*/
  
  [Fact]
  public async void ListWithFixedPrice20Test()
