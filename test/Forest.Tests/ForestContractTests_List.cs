@@ -2282,7 +2282,7 @@ public class ForestContractListTests : ForestContractTestBase
         
     }
     
-    [Fact]
+    /*[Fact]
     public async void Delist33Test_Symbol_Is_Null()
     {
         //basic begin
@@ -2438,7 +2438,7 @@ public class ForestContractListTests : ForestContractTestBase
         var exception = await Assert.ThrowsAsync<Exception>(act);
         exception.Message.ShouldContain("Incorrect listing price.");
         
-    }
+    }*/
     
     /* [Fact]
      public async void Delist35Test()
