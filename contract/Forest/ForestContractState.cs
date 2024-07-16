@@ -53,6 +53,11 @@ namespace Forest
         /// </summary>
         public MappedState<Address, string, long> OfferTotalAmountMap { get; set; }
 
+        /// <summary>
+        /// Collection Symbol  -> User Address -> Listing Amount * decimal
+        /// </summary>
+        public MappedState<string, Address, string> ListedNFTTotalAmountMap { get; set; }
+        
         public SingletonState<Price> AIServiceFeeConfig { get; set; }
         public SingletonState<Address> AIServiceFeeReceiver { get; set; }
         
