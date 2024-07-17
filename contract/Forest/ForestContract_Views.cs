@@ -117,11 +117,34 @@ public partial class ForestContract
     public override GetTotalEffectiveListedNFTAmountOutput GetTotalEffectiveListedNFTAmount(GetTotalEffectiveListedNFTAmountInput input)
     {
         var totalAmount = GetEffectiveListedNFTTotalAmount(input.Address, input.Symbol);
+
+        var collectionSymbol = TransferCollectionSymbol(input.Symbol);
+        var collectionAllowance = State.ListedNFTTotalAmountMap[collectionSymbol][input.Address];
         var allowance = GetAllowance(input.Address, input.Symbol);
+        if (allowance == 0)
+        {
+            return new GetTotalEffectiveListedNFTAmountOutput()
+            {
+                Symbol = input.Symbol,
+                Allowance = allowance,
+                TotalAmount = totalAmount
+            };
+        }
+        
+        if (allowance != 0 && collectionAllowance == "")
+        {
+            return new GetTotalEffectiveListedNFTAmountOutput()
+            {
+                Symbol = input.Symbol,
+                Allowance = 0,
+                TotalAmount = totalAmount
+            };
+        }
+
         var getTotalEffectiveListedNftAmountOutput = new GetTotalEffectiveListedNFTAmountOutput()
         {
             Symbol = input.Symbol,
-            Allowance = allowance,
+            Allowance = long.Parse(collectionAllowance),
             TotalAmount = totalAmount
         };
         

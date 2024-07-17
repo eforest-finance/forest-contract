@@ -309,6 +309,30 @@ public partial class ForestContract
         });
         return allowance?.Allowance ?? 0;
     }
+
+    public static string TransferCollectionSymbol(string symbol)
+    {
+        if (string.IsNullOrEmpty(symbol))
+            return symbol;
+
+        var parts = symbol.Split($"{SymbolSeparator}");
+
+        if (parts.Length == 1)
+        {
+            return parts[0];
+        }
+
+        if (parts.Length == 2)
+        {
+            var baseString = parts[0];
+            if (int.TryParse(parts[1], out int number))
+            {
+                return $"{baseString}{SymbolSeparator}{CollectionSymbolSuffix}";
+            }
+        }
+
+        return symbol;
+    }
     
     private void RequireContractAIServiceFeeConfigSet()
     {
