@@ -130,8 +130,8 @@ public partial class ForestContract
                 TotalAmount = totalAmount
             };
         }
-        
-        if (allowance != 0 && collectionAllowance == "")
+
+        if (allowance != 0 && (collectionAllowance == null || collectionAllowance == ""))
         {
             return new GetTotalEffectiveListedNFTAmountOutput()
             {
