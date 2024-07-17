@@ -1620,7 +1620,7 @@ public partial class InscriptionContractTests : InscriptionContractTestBase
         });
 
         var seedOwnedSymbol = "ELFS" + "-0";
-        var seedExpTime = "1720590467";
+        var seedExpTime = "1846825944";
         await TokenContractStub.Create.SendAsync(new CreateInput
         {
             Symbol = "SEED-1",
