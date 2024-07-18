@@ -1,3 +1,4 @@
+using System;
 using AElf.Types;
 using Google.Protobuf.WellKnownTypes;
 
@@ -121,31 +122,22 @@ public partial class ForestContract
         var collectionSymbol = TransferCollectionSymbol(input.Symbol);
         var collectionAllowance = State.ListedNFTTotalAmountMap[collectionSymbol][input.Address];
         var allowance = GetAllowance(input.Address, input.Symbol);
-        if (allowance == 0)
+
+        if (collectionAllowance == null || collectionAllowance == "")
         {
             return new GetTotalEffectiveListedNFTAmountOutput()
             {
                 Symbol = input.Symbol,
                 Allowance = allowance,
-                TotalAmount = totalAmount
-            };
-        }
-
-        if (allowance != 0 && (collectionAllowance == null || collectionAllowance == ""))
-        {
-            return new GetTotalEffectiveListedNFTAmountOutput()
-            {
-                Symbol = input.Symbol,
-                Allowance = 0,
-                TotalAmount = totalAmount
+                TotalAmount = Math.Max(allowance,totalAmount)
             };
         }
 
         var getTotalEffectiveListedNftAmountOutput = new GetTotalEffectiveListedNFTAmountOutput()
         {
             Symbol = input.Symbol,
-            Allowance = long.Parse(collectionAllowance),
-            TotalAmount = totalAmount
+            Allowance = allowance,
+            TotalAmount = long.Parse(collectionAllowance)
         };
         
         return getTotalEffectiveListedNftAmountOutput;
