@@ -54,19 +54,7 @@ public partial class ForestContract
             PurchaseSymbol = performDealInput.PurchaseSymbol,
             PurchaseAmount = performDealInput.PurchaseAmount
         });
-        var collectionSymbol = TransferCollectionSymbol(performDealInput.NFTSymbol);
-        var collectionAllowance = State.ListedNFTTotalAmountMap[collectionSymbol][performDealInput.NFTFrom];
-        if (collectionAllowance == null || collectionAllowance == "")
-        {
-            State.ListedNFTTotalAmountMap[collectionSymbol][performDealInput.NFTFrom] = "";
-        }
-        else
-        {
-            var originQuantity = long.Parse(collectionAllowance);
-            var resultQuantity = originQuantity - performDealInput.NFTQuantity;
-            State.ListedNFTTotalAmountMap[collectionSymbol][performDealInput.NFTFrom] =
-                (resultQuantity >= 0 ? resultQuantity : 0).ToString();
-        }
+        
     }
 
     private struct PerformDealInput
