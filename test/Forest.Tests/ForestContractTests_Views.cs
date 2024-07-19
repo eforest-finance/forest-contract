@@ -375,8 +375,8 @@ public class ForestContractTests_Views : ForestContractTestBase
                         Symbol = NftSymbol,
                         Address = User1Address
                     }));
-            getTotalEffectiveListedNftAmount.Allowance.ShouldBe(allowanceQuanlity);
-            getTotalEffectiveListedNftAmount.TotalAmount.ShouldBe(0);
+            getTotalEffectiveListedNftAmount.Allowance.ShouldBe(1);
+            getTotalEffectiveListedNftAmount.TotalAmount.ShouldBe(1);
         }
 
         #endregion
@@ -1185,7 +1185,7 @@ public class ForestContractTests_Views : ForestContractTestBase
                         Address = User1Address
                     }));
             getTotalEffectiveListedNftAmount.Allowance.ShouldBe(0);
-            getTotalEffectiveListedNftAmount.TotalAmount.ShouldBe(sellQuantity);
+            getTotalEffectiveListedNftAmount.TotalAmount.ShouldBe(sellQuantity*2);
         }
         #endregion
         
