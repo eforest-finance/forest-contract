@@ -1185,7 +1185,7 @@ public class ForestContractTests_Views : ForestContractTestBase
                         Address = User1Address
                     }));
             getTotalEffectiveListedNftAmount.Allowance.ShouldBe(0);
-            getTotalEffectiveListedNftAmount.TotalAmount.ShouldBe(sellQuantity);
+            getTotalEffectiveListedNftAmount.TotalAmount.ShouldBe(sellQuantity*2);
         }
         #endregion
         

@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using AElf;
 using AElf.Contracts.MultiToken;
@@ -120,11 +121,13 @@ public partial class ForestContract
             Quantity = input.Quantity,
             WhitelistId = whitelistId
         });
+        var allowance = GetAllowance(Context.Sender, input.Symbol);
         var collectionSymbol = TransferCollectionSymbol(input.Symbol);
         var collectionAllowance = State.ListedNFTTotalAmountMap[collectionSymbol][Context.Sender];
         if (collectionAllowance == null || collectionAllowance == "")
         {
-            State.ListedNFTTotalAmountMap[collectionSymbol][Context.Sender] = input.Quantity.ToString();
+            State.ListedNFTTotalAmountMap[collectionSymbol][Context.Sender] =
+                Math.Max(allowance, input.Quantity).ToString();
         }
         else
         {
