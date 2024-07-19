@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using AElf;
 using AElf.Contracts.MultiToken;
@@ -120,6 +121,20 @@ public partial class ForestContract
             Quantity = input.Quantity,
             WhitelistId = whitelistId
         });
+        var allowance = GetAllowance(Context.Sender, input.Symbol);
+        var collectionSymbol = TransferCollectionSymbol(input.Symbol);
+        var collectionAllowance = State.ListedNFTTotalAmountMap[collectionSymbol][Context.Sender];
+        if (collectionAllowance == null || collectionAllowance == "")
+        {
+            State.ListedNFTTotalAmountMap[collectionSymbol][Context.Sender] =
+                Math.Max(allowance, input.Quantity).ToString();
+        }
+        else
+        {
+            var originQuantity = long.Parse(collectionAllowance);
+            State.ListedNFTTotalAmountMap[collectionSymbol][Context.Sender] =
+                (input.Quantity + originQuantity).ToString();
+        }
 
         State.ListedNFTInfoListMap[input.Symbol][Context.Sender] = listedNftInfoList;
 
@@ -211,6 +226,20 @@ public partial class ForestContract
             Owner = Context.Sender,
             Quantity = input.Quantity
         });
+        
+        var collectionSymbol = TransferCollectionSymbol(input.Symbol);
+        var collectionAllowance = State.ListedNFTTotalAmountMap[collectionSymbol][Context.Sender];
+        if (collectionAllowance == null || collectionAllowance == "")
+        {
+            State.ListedNFTTotalAmountMap[collectionSymbol][Context.Sender] = "";
+        }
+        else
+        {
+            var originQuantity = long.Parse(collectionAllowance);
+            var resultQuantity = originQuantity - input.Quantity;
+            State.ListedNFTTotalAmountMap[collectionSymbol][Context.Sender] =
+                (resultQuantity >= 0 ? resultQuantity.ToString() : "");
+        }
 
         return new Empty();
     }
@@ -275,6 +304,9 @@ public partial class ForestContract
             return new Empty();
         }
 
+        var collectionSymbol = TransferCollectionSymbol(input.Symbol);
+        var collectionAllowance = State.ListedNFTTotalAmountMap[collectionSymbol][Context.Sender];
+
         foreach (var listedNftInfo in fixedPriceListedNftInfoList)
         {
             var projectId = CalculateProjectId(input.Symbol, Context.Sender);
@@ -287,6 +319,18 @@ public partial class ForestContract
                 Owner = listedNftInfo.Owner,
                 Price = listedNftInfo.Price
             });
+
+            if (collectionAllowance == null || collectionAllowance == "" || collectionAllowance == "0")
+            {
+                continue;
+            }
+            
+            var originQuantity = long.Parse(collectionAllowance);
+            var resultQuantity = originQuantity - listedNftInfo.Quantity;
+            State.ListedNFTTotalAmountMap[collectionSymbol][Context.Sender] =
+                    (resultQuantity >= 0 ? resultQuantity : 0).ToString();
+            collectionAllowance = State.ListedNFTTotalAmountMap[collectionSymbol][Context.Sender];
+            
         }
 
         return new Empty();

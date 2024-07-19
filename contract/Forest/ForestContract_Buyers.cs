@@ -346,6 +346,20 @@ public partial class ForestContract
                     Quantity = listedNftInfo.Quantity,
                     Price = listedNftInfo.Price,
                 });
+                
+                var collectionSymbol = TransferCollectionSymbol(listedNftInfo.Symbol);
+                var collectionAllowance = State.ListedNFTTotalAmountMap[collectionSymbol][listedNftInfo.Owner];
+                if (collectionAllowance == null || collectionAllowance == "")
+                {
+                    State.ListedNFTTotalAmountMap[collectionSymbol][listedNftInfo.Owner] = "";
+                }
+                else
+                {
+                    var originQuantity = long.Parse(collectionAllowance);
+                    var resultQuantity = originQuantity - dealQuantity;
+                    State.ListedNFTTotalAmountMap[collectionSymbol][listedNftInfo.Owner] =
+                        (resultQuantity >= 0 ? resultQuantity : 0).ToString();
+                }
             }
         }
 
@@ -361,6 +375,20 @@ public partial class ForestContract
                     Owner = info.Owner,
                     Price = info.Price
                 });
+                var collectionSymbol = TransferCollectionSymbol(info.Symbol);
+                var collectionAllowance = State.ListedNFTTotalAmountMap[collectionSymbol][info.Owner];
+                if (collectionAllowance == null || collectionAllowance == "")
+                {
+                    State.ListedNFTTotalAmountMap[collectionSymbol][info.Owner] = "";
+                }
+                else
+                {
+                    var originQuantity = long.Parse(collectionAllowance);
+                    var resultQuantity = originQuantity - info.Quantity;
+                    State.ListedNFTTotalAmountMap[collectionSymbol][info.Owner] =
+                        (resultQuantity >= 0 ? resultQuantity : 0).ToString();
+                }
+                
             }
         }
 

@@ -24,5 +24,7 @@ public partial class ForestContract
     public const string DefaultAIImageSize256 = "256x256";
     public const int DefaultMaxBatchCancelOfferCount= 20;
     public const int DefaultMaxBatchCancelListCount= 20;
+    public const string CollectionSymbolSuffix = "0";
+    public const string SymbolSeparator = "-";
 
 }
