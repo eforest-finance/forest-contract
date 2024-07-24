@@ -126,12 +126,12 @@ public partial class ForestContract
         var collectionAllowance = State.ListedNFTTotalAmountMap[collectionSymbol][Context.Sender];
         if (collectionAllowance == null || collectionAllowance == "")
         {
-            var listedNFTTotalAmount = (allowance == MaxApproveAllowance) ? input.Quantity : Math.Max(allowance, input.Quantity);
+            var listedNFTTotalAmount = (allowance >= MaxApproveAllowance) ? input.Quantity : Math.Max(allowance, input.Quantity);
             State.ListedNFTTotalAmountMap[collectionSymbol][Context.Sender] = listedNFTTotalAmount.ToString();
         }
         else
         {
-            var originQuantity = (long.Parse(collectionAllowance) == MaxApproveAllowance)
+            var originQuantity = (long.Parse(collectionAllowance) >= MaxApproveAllowance)
                 ? DefaultApproveAllowance
                 : long.Parse(collectionAllowance);
             State.ListedNFTTotalAmountMap[collectionSymbol][Context.Sender] =
