@@ -26,5 +26,7 @@ public partial class ForestContract
     public const int DefaultMaxBatchCancelListCount= 20;
     public const string CollectionSymbolSuffix = "0";
     public const string SymbolSeparator = "-";
+    public const long DefaultApproveAllowance = 10000;
+    public const long MaxApproveAllowance = 9223372036854775000;
 
 }
