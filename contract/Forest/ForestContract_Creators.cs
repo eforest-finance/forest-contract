@@ -16,10 +16,6 @@ public partial class ForestContract
         {
             Symbol = input.Symbol
         });
-        State.TokenContract.GetTokenInfo.Call(new GetTokenInfoInput
-        {
-            Symbol = input.Symbol
-        });
 
         var nftCollectionInfo = State.TokenContract.GetTokenInfo.Call(new GetTokenInfoInput
         {
