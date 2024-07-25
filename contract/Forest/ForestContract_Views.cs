@@ -113,7 +113,7 @@ public partial class ForestContract
             {
                 Symbol = input.Symbol,
                 Allowance = allowance,
-                TotalAmount = Math.Max(allowance,totalAmount)
+                TotalAmount = (allowance >= MaxApproveAllowance) ? totalAmount : Math.Max(allowance,totalAmount)
             };
         }
 
@@ -121,7 +121,7 @@ public partial class ForestContract
         {
             Symbol = input.Symbol,
             Allowance = allowance,
-            TotalAmount = long.Parse(collectionAllowance)
+            TotalAmount = (long.Parse(collectionAllowance) >= MaxApproveAllowance) ? DefaultApproveAllowance : long.Parse(collectionAllowance)
         };
         
         return getTotalEffectiveListedNftAmountOutput;
