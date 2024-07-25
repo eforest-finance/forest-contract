@@ -385,4 +385,15 @@ public partial class ForestContract
             State.MaxBatchCancelListCount.Value = DefaultMaxBatchCancelListCount;
         }
     }
+
+    private RoyaltyInfo GetRoyaltyInfo(string nftSymbol)
+    {
+        var symbol = TransferCollectionSymbol(nftSymbol);
+        if (string.IsNullOrEmpty(symbol))
+        {
+            return null;
+        }
+
+        return State.RoyaltyInfoMap[symbol];
+    }
 }
