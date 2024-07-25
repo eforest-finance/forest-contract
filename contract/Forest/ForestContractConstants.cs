@@ -27,7 +27,7 @@ public partial class ForestContract
     public const string CollectionSymbolSuffix = "0";
     public const string SymbolSeparator = "-";
     public const long DefaultApproveAllowance = 10000;
-    public const long MaxApproveAllowance = 9223372036854770000;
+    public const long MaxApproveAllowance = 9223372000000000000;
     
     
 }
