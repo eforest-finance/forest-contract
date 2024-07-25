@@ -42,10 +42,7 @@ namespace Forest
         /// <summary>
         /// Symbol -> Token Id -> Royalty
         /// </summary>
-        public MappedState<string, int> RoyaltyMap { get; set; }
-
-        public MappedState<string, Address> RoyaltyFeeReceiverMap { get; set; }
-        public MappedState<string, CertainNFTRoyaltyInfo> CertainNFTRoyaltyMap { get; set; }
+        public MappedState<string, RoyaltyInfo> RoyaltyInfoMap { get; set; }
         public MappedState<string, StringList> TokenWhiteListMap { get; set; }
         
         /// <summary>

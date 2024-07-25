@@ -64,23 +64,7 @@ public partial class ForestContract
 
     public override RoyaltyInfo GetRoyalty(GetRoyaltyInput input)
     {
-        var royaltyInfo = new RoyaltyInfo
-        {
-            Royalty = State.RoyaltyMap[input.Symbol]
-        };
-
-        var certainNftRoyalty = State.CertainNFTRoyaltyMap[input.Symbol] ?? new CertainNFTRoyaltyInfo();
-        if (certainNftRoyalty.IsManuallySet)
-        {
-            royaltyInfo.Royalty = certainNftRoyalty.Royalty;
-        }
-
-        if (State.RoyaltyFeeReceiverMap[input.Symbol] != null)
-        {
-            royaltyInfo.RoyaltyFeeReceiver = State.RoyaltyFeeReceiverMap[input.Symbol];
-        }
-
-        return royaltyInfo;
+        return State.RoyaltyInfoMap[input.Symbol];
     }
 
     public override ServiceFeeInfo GetServiceFeeInfo(Empty input)

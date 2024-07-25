@@ -9,33 +9,18 @@ public partial class ForestContract
     public override Empty SetRoyalty(SetRoyaltyInput input)
     {
         AssertContractInitialized();
-
-        // 0% - 10%
-        Assert(0 <= input.Royalty && input.Royalty <= 1000, "Royalty should be between 0% to 10%.");
-        var nftCollectionInfos = State.TokenContract.GetTokenInfo.Call(new GetTokenInfoInput
-        {
-            Symbol = input.Symbol
-        });
-
-        var nftCollectionInfo = State.TokenContract.GetTokenInfo.Call(new GetTokenInfoInput
+        Assert(0 <= input.Royalty && input.Royalty < FeeDenominator, "Royalty should be between 0% to 100%.");
+        var tokenInfo = State.TokenContract.GetTokenInfo.Call(new GetTokenInfoInput
         {
             Symbol = input.Symbol,
         });
-        Assert(!string.IsNullOrEmpty(nftCollectionInfo.Symbol), "NFT Collection not found.");
+        Assert(!string.IsNullOrEmpty(tokenInfo.Symbol), "TokenInfo not found.");
 
-        var nftInfo = State.TokenContract.GetTokenInfo.Call(new GetTokenInfoInput
+        State.RoyaltyInfoMap[input.Symbol] = new RoyaltyInfo()
         {
-            Symbol = input.Symbol,
-        });
-
-        Assert(nftCollectionInfo.Issuer == Context.Sender || nftInfo.Issuer == Context.Sender, "No permission.");
-        State.CertainNFTRoyaltyMap[input.Symbol] = new CertainNFTRoyaltyInfo
-        {
-            IsManuallySet = true,
+            RoyaltyFeeReceiver = input.RoyaltyFeeReceiver,
             Royalty = input.Royalty
         };
-
-        State.RoyaltyFeeReceiverMap[input.Symbol] = input.RoyaltyFeeReceiver;
         return new Empty();
     }
 
