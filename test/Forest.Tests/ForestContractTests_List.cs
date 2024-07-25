@@ -3260,4 +3260,60 @@ public class ForestContractListTests : ForestContractTestBase
 
         }
     }
+    
+    [Fact]
+    public async void RoyaltyTest()
+    {
+        await InitializeForestContract();
+        await PrepareNftData();
+
+        await AdminForestContractStub.SetRoyalty.SendAsync(new SetRoyaltyInput()
+        {
+            Symbol = "TESTNFT-0",
+            RoyaltyFeeReceiver = User1Address,
+            Royalty = 250
+        });
+
+        var royaltyInfo = await ForestContractStub.GetRoyalty.CallAsync(new GetRoyaltyInput()
+        {
+            Symbol = "TESTNFT-0"
+        });
+        royaltyInfo.ShouldNotBeNull();
+        royaltyInfo.Royalty.ShouldBe(250);
+        royaltyInfo.RoyaltyFeeReceiver.ShouldBe(User1Address);
+        
+        //exception
+        //            var exception = await Assert.ThrowsAsync<Exception>(act);
+        var result = await AdminForestContractStub.SetRoyalty.SendWithExceptionAsync(new SetRoyaltyInput()
+        {
+            Symbol = "TEST-0",
+            RoyaltyFeeReceiver = User1Address,
+            Royalty = 250
+        });
+        result.TransactionResult.Error.ShouldContain("TokenInfo not found");
+        
+        result = await AdminForestContractStub.SetRoyalty.SendWithExceptionAsync(new SetRoyaltyInput()
+        {
+            Symbol = "TESTNFT-0",
+            RoyaltyFeeReceiver = User1Address,
+            Royalty = -250
+        });
+        result.TransactionResult.Error.ShouldContain("Royalty should be between");
+        
+        result = await AdminForestContractStub.SetRoyalty.SendWithExceptionAsync(new SetRoyaltyInput()
+        {
+            Symbol = "TESTNFT-0",
+            RoyaltyFeeReceiver = User1Address,
+            Royalty = 10000
+        });
+        result.TransactionResult.Error.ShouldContain("Royalty should be between");
+        
+        result = await Seller1ForestContractStub.SetRoyalty.SendWithExceptionAsync(new SetRoyaltyInput()
+        {
+            Symbol = "TESTNFT-0",
+            RoyaltyFeeReceiver = User1Address,
+            Royalty = 10000
+        });
+        result.TransactionResult.Error.ShouldContain("No permission");
+    }
 }

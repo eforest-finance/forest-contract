@@ -9,6 +9,7 @@ public partial class ForestContract
     public override Empty SetRoyalty(SetRoyaltyInput input)
     {
         AssertContractInitialized();
+        AssertSenderIsAdmin();
         Assert(0 <= input.Royalty && input.Royalty < FeeDenominator, "Royalty should be between 0% to 100%.");
         var tokenInfo = State.TokenContract.GetTokenInfo.Call(new GetTokenInfoInput
         {
