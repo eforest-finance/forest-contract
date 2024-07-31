@@ -314,7 +314,6 @@ public partial class ForestContract
             }
         }
         
-        1
         return  totalAmount;
     }
 
