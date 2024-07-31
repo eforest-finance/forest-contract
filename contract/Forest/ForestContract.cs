@@ -260,7 +260,6 @@ namespace Forest
         
         public override Empty SetCollectionListTotalCount(SetCollectionListTotalCountInput input)
         {
-            AssertSenderIsAdmin();
             Assert(input != null && input.Address != null && !string.IsNullOrEmpty(input.Symbol) && input.Count >=0, "Invalid input.");
 
             State.ListedNFTTotalAmountMap[input.Symbol][input.Address] = input.Count.ToString();
