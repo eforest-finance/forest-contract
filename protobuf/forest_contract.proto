@@ -212,11 +212,6 @@ message DealInfo {
   google.protobuf.Timestamp deal_time = 7;
 }
 
-message CertainNFTRoyaltyInfo {
-  bool is_manually_set = 1;
-  int32 royalty = 2;
-}
-
 message ServiceFeeInfo {
   int32 service_fee_rate = 1;
   aelf.Address service_fee_receiver = 2;

@@ -17,6 +17,15 @@ public partial class ForestContract
         Assert(performDealInput.NFTFrom != performDealInput.NFTTo, "NFT From address cannot be NFT To address.");
         var serviceFee = performDealInput.PurchaseAmount.Mul(State.ServiceFeeRate.Value).Div(FeeDenominator);
         var actualAmount = performDealInput.PurchaseAmount.Sub(serviceFee);
+        
+        var royaltyFee = 0l;
+        var royaltyInfo = GetRoyaltyInfo(performDealInput.NFTSymbol);
+        if (royaltyInfo != null && royaltyInfo.Royalty > 0 && royaltyInfo.RoyaltyFeeReceiver != null)
+        {
+            royaltyFee = performDealInput.PurchaseAmount.Mul(royaltyInfo.Royalty).Div(FeeDenominator);
+            actualAmount = actualAmount.Sub(royaltyFee);
+        }
+        
         if (actualAmount != 0)
         {
             State.TokenContract.TransferFrom.Send(new TransferFromInput
@@ -34,6 +43,17 @@ public partial class ForestContract
                     To = State.ServiceFeeReceiver.Value,
                     Symbol = performDealInput.PurchaseSymbol,
                     Amount = serviceFee
+                });
+            }
+            //RoyaltyFee
+            if (royaltyFee > 0 && performDealInput.NFTTo != royaltyInfo.RoyaltyFeeReceiver)
+            {
+                State.TokenContract.TransferFrom.Send(new TransferFromInput
+                {
+                    From = performDealInput.NFTTo,
+                    To = royaltyInfo.RoyaltyFeeReceiver,
+                    Symbol = performDealInput.PurchaseSymbol,
+                    Amount = royaltyFee
                 });
             }
         }
@@ -384,5 +404,16 @@ public partial class ForestContract
         {
             State.MaxBatchCancelListCount.Value = DefaultMaxBatchCancelListCount;
         }
+    }
+
+    private RoyaltyInfo GetRoyaltyInfo(string nftSymbol)
+    {
+        var symbol = TransferCollectionSymbol(nftSymbol);
+        if (string.IsNullOrEmpty(symbol))
+        {
+            return null;
+        }
+
+        return State.RoyaltyInfoMap[symbol];
     }
 }
