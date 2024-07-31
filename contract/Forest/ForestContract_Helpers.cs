@@ -292,6 +292,14 @@ public partial class ForestContract
         Assert(address != null, $"Invalid param Address");
         Assert(symbol != null, $"Invalid param Symbol");
 
+        var collectionSymbol = TransferCollectionSymbol(symbol);
+        var collectionListedNFTTotalAmount = State.ListedNFTTotalAmountMap[collectionSymbol][address];
+
+        if (collectionListedNFTTotalAmount != null && collectionListedNFTTotalAmount != "")
+        {
+            return long.Parse(collectionListedNFTTotalAmount);
+        }
+        
         var listedNftInfoList = State.ListedNFTInfoListMap[symbol][address];
         var totalAmount = 0L;
         if (listedNftInfoList != null)
@@ -305,6 +313,8 @@ public partial class ForestContract
                 }
             }
         }
+        
+        1
         return  totalAmount;
     }
 
