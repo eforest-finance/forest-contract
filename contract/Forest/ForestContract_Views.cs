@@ -104,10 +104,10 @@ public partial class ForestContract
         var totalAmount = GetEffectiveListedNFTTotalAmount(input.Address, input.Symbol);
 
         var collectionSymbol = TransferCollectionSymbol(input.Symbol);
-        var collectionAllowance = State.ListedNFTTotalAmountMap[collectionSymbol][input.Address];
+        var collectionListedNFTTotalAmount = State.ListedNFTTotalAmountMap[collectionSymbol][input.Address];
         var allowance = GetAllowance(input.Address, input.Symbol);
 
-        if (collectionAllowance == null || collectionAllowance == "")
+        if (collectionListedNFTTotalAmount == null || collectionListedNFTTotalAmount == "")
         {
             return new GetTotalEffectiveListedNFTAmountOutput()
             {
@@ -121,7 +121,7 @@ public partial class ForestContract
         {
             Symbol = input.Symbol,
             Allowance = allowance,
-            TotalAmount = (long.Parse(collectionAllowance) >= MaxApproveAllowance) ? DefaultApproveAllowance : long.Parse(collectionAllowance)
+            TotalAmount = (long.Parse(collectionListedNFTTotalAmount) >= MaxApproveAllowance) ? DefaultApproveAllowance : long.Parse(collectionListedNFTTotalAmount)
         };
         
         return getTotalEffectiveListedNftAmountOutput;

@@ -278,7 +278,7 @@ public partial class ForestContract
         var totalAmount = amount.Add(currentAmount);
         Assert(allowance >= totalAmount, $"The allowance you set is less than required. Please reset it.");
     }
-    
+
     private long GetOfferTotalAmount(Address address, string symbol)
     {
         Assert(address != null, $"Invalid param Address");
@@ -292,6 +292,14 @@ public partial class ForestContract
         Assert(address != null, $"Invalid param Address");
         Assert(symbol != null, $"Invalid param Symbol");
 
+        var collectionSymbol = TransferCollectionSymbol(symbol);
+        var collectionListedNFTTotalAmount = State.ListedNFTTotalAmountMap[collectionSymbol][address];
+
+        if (collectionListedNFTTotalAmount != null && collectionListedNFTTotalAmount != "")
+        {
+            return long.Parse(collectionListedNFTTotalAmount);
+        }
+        
         var listedNftInfoList = State.ListedNFTInfoListMap[symbol][address];
         var totalAmount = 0L;
         if (listedNftInfoList != null)
@@ -305,6 +313,7 @@ public partial class ForestContract
                 }
             }
         }
+        
         return  totalAmount;
     }
 

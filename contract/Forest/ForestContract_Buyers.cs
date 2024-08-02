@@ -229,15 +229,25 @@ public partial class ForestContract
         Assert(nftInfo != null && !string.IsNullOrWhiteSpace(nftInfo.Symbol), "Invalid symbol data");
         var userBalanceDic = new Dictionary<string,long>();
         var failPriceDic = new Dictionary<long, FailPrice>();
+        var listOwnerAllowanceDic = new Dictionary<string, long>();
+        
         foreach (var fixPrice in input.FixPriceList)
         {
-           SingleMakeOfferForBatchBuyNow(input.Symbol, new FixPrice()
+            Assert(fixPrice.Quantity > 0, "Invalid param Quantity.");
+            Assert(fixPrice.Price.Amount > 0, "Invalid price amount.");
+            Assert(fixPrice.OfferTo != null, "Invalid param OfferTo.");
+            if(!listOwnerAllowanceDic.ContainsKey(fixPrice.OfferTo.ToBase58()))
+            {
+                listOwnerAllowanceDic[fixPrice.OfferTo.ToBase58()] =GetAllowance(fixPrice.OfferTo, input.Symbol);
+            }
+            
+            SingleMakeOfferForBatchBuyNow(input.Symbol, new FixPrice()
             {
                 OfferTo = fixPrice.OfferTo,
                 Quantity = fixPrice.Quantity,
                 Price = fixPrice.Price,
                 StartTime = fixPrice.StartTime
-            }, userBalanceDic, failPriceDic);
+            }, userBalanceDic, failPriceDic, listOwnerAllowanceDic);
         }
 
         Context.Fire(new BatchBuyNowResult
@@ -255,11 +265,9 @@ public partial class ForestContract
 
     private void SingleMakeOfferForBatchBuyNow(string symbol, FixPrice inputFixPrice
         , Dictionary<string,long> userBalanceDic
-        , Dictionary<long, FailPrice> failPriceDic)
+        , Dictionary<long, FailPrice> failPriceDic
+        , Dictionary<string, long> listOwnerAllowanceDic)
     {
-        Assert(inputFixPrice.Quantity > 0, "Invalid param Quantity.");
-        Assert(inputFixPrice.Price.Amount > 0, "Invalid price amount.");
-        Assert(inputFixPrice.OfferTo != null, "Invalid param OfferTo.");
         var nftInfo = State.TokenContract.GetTokenInfo.Call(new GetTokenInfoInput
         {
             Symbol = symbol,
@@ -287,14 +295,14 @@ public partial class ForestContract
         Assert(nftInfo.Supply > 0, "NFT does not exist.");
 
         var dealService = GetDealService();
+        var toRemove = new ListedNFTInfoList();
+
         var normalPriceDealResultList = dealService.GetDealResultListForBatchBuy(symbol, inputFixPrice,
             new ListedNFTInfoList
             {
                 Value = { affordableNftInfoList }
-            }, failPriceDic).ToList();
-        Assert(normalPriceDealResultList.Count > 0, "NormalPrice does not exist.");
+            }, failPriceDic, toRemove, listOwnerAllowanceDic).ToList();
 
-        var toRemove = new ListedNFTInfoList();
         foreach (var dealResult in normalPriceDealResultList)
         {
             var listedNftInfo = affordableNftInfoList[dealResult.Index];
