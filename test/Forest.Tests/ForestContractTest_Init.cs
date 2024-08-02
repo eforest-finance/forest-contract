@@ -246,7 +246,7 @@ public class ForestContractTest_Init : ForestContractTestBase
         await InitializeForestContract();
         await PrepareNftData();
 
-        var res = await Seller1ForestContractStub.SetRoyalty.SendAsync(new SetRoyaltyInput()
+        var res = await AdminForestContractStub.SetRoyalty.SendAsync(new SetRoyaltyInput()
         {
             Symbol = NftSymbol,
             Royalty = 100,

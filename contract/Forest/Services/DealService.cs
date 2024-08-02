@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using AElf.Contracts.MultiToken;
 using AElf.CSharp.Core;
 using AElf.Sdk.CSharp;
 
@@ -67,7 +69,8 @@ public class DealService
     }
 
     public IEnumerable<DealResult> GetDealResultListForBatchBuy(string symbol, FixPrice inputFixPrice
-        , ListedNFTInfoList listedNftInfoList, Dictionary<long, FailPrice> failPriceDic)
+        , ListedNFTInfoList listedNftInfoList, Dictionary<long, FailPrice> failPriceDic, ListedNFTInfoList toRemove,
+        Dictionary<string, long> listOwnerAllowanceDic)
     {
         
         var dealResultList = new List<DealResult>();
@@ -78,27 +81,62 @@ public class DealService
                      i.Price.Symbol == inputFixPrice.Price.Symbol
                      && blockTime >= i.Duration.StartTime
                      && blockTime >= i.Duration.PublicTime
-                     ).OrderByDescending(i => i.Duration.PublicTime))
+                 ).OrderByDescending(i => i.Duration.PublicTime))
         {
             long failNumber = 0;
-            if (listedNftInfo.Quantity >= needToDealQuantity)
+            
+            var defaultAllowance = 0;
+
+            if (!listOwnerAllowanceDic.TryGetValue(listedNftInfo.Owner.ToBase58(), out var allowance))
             {
-                var dealResult = new DealResult
-                {
-                    Symbol = symbol,
-                    Quantity = needToDealQuantity,
-                    PurchaseSymbol = inputFixPrice.Price.Symbol,
-                    PurchaseAmount = listedNftInfo.Price.Amount,
-                    Duration = listedNftInfo.Duration,
-                    Index = currentIndex
-                };
-                // Fulfill demands.
-                dealResultList.Add(dealResult);
-                needToDealQuantity = 0;
+                allowance = defaultAllowance;
+            }
+
+            var minAllowance = Math.Min(needToDealQuantity, listedNftInfo.Quantity);
+            if (allowance < minAllowance)
+            {
+                toRemove.Value.Add(listedNftInfo);
+                
+                failNumber = needToDealQuantity;
             }
             else
             {
-                failNumber = inputFixPrice.Quantity - listedNftInfo.Quantity;
+                listOwnerAllowanceDic[listedNftInfo.Owner.ToBase58()] = allowance - minAllowance;
+                if (listedNftInfo.Quantity >= needToDealQuantity)
+                {
+                    var dealResult = new DealResult
+                    {
+                        Symbol = symbol,
+                        Quantity = needToDealQuantity,
+                        PurchaseSymbol = inputFixPrice.Price.Symbol,
+                        PurchaseAmount = listedNftInfo.Price.Amount,
+                        Duration = listedNftInfo.Duration,
+                        Index = currentIndex
+                    };
+                    // Fulfill demands.
+                    dealResultList.Add(dealResult);
+                    needToDealQuantity = 0;
+                }
+                else
+                {
+                    failNumber = inputFixPrice.Quantity - listedNftInfo.Quantity;
+                
+                    var dealResult = new DealResult
+                    {
+                        Symbol = symbol,
+                        Quantity = listedNftInfo.Quantity,
+                        PurchaseSymbol = inputFixPrice.Price.Symbol,
+                        PurchaseAmount = listedNftInfo.Price.Amount,
+                        Duration = listedNftInfo.Duration,
+                        Index = currentIndex
+                    };
+                    dealResultList.Add(dealResult);
+                    needToDealQuantity = needToDealQuantity.Sub(listedNftInfo.Quantity);
+                }
+            }
+            
+            if (failNumber != 0)
+            {
                 if (failPriceDic.TryGetValue(inputFixPrice.Price.Amount, out var value))
                 {
                     value.Quantity += failNumber;
@@ -115,17 +153,6 @@ public class DealService
                         }
                     });
                 }
-                var dealResult = new DealResult
-                {
-                    Symbol = symbol,
-                    Quantity = listedNftInfo.Quantity,
-                    PurchaseSymbol = inputFixPrice.Price.Symbol,
-                    PurchaseAmount = listedNftInfo.Price.Amount,
-                    Duration = listedNftInfo.Duration,
-                    Index = currentIndex
-                };
-                dealResultList.Add(dealResult);
-                needToDealQuantity = needToDealQuantity.Sub(listedNftInfo.Quantity);
             }
 
             if (needToDealQuantity == 0)

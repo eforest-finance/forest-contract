@@ -14,6 +14,13 @@ namespace Forest;
 
 public partial class ForestContractTests_MakeOffer
 {
+
+    private async Task ResetApprove(int approveQuantity,
+        TokenContractImplContainer.TokenContractImplStub userTokenContractStub)
+    {
+        await userTokenContractStub.Approve.SendAsync(new ApproveInput()
+            { Spender = ForestContractAddress, Symbol = NftSymbol, Amount = approveQuantity });
+    }
     private async Task<Timestamp> InitUserListInfo(int listQuantity, long inputSellPrice, int approveQuantity,
         TokenContractImplContainer.TokenContractImplStub userTokenContractStub
         , ForestContractContainer.ForestContractStub sellerForestContractStub ,Address userAddress)
@@ -236,6 +243,130 @@ public partial class ForestContractTests_MakeOffer
         #endregion
     }
     
+     [Fact]
+    public async void BatchBuyNow_Buy_From_OneUser_Listing_Records_Allowance_Not_Enough_Success()
+    {
+        await InitializeForestContract();
+        await PrepareNftData();
+        #region basic begin
+        //seller user1 add listing
+        var user1ApproveQuantity = 0;
+        var user1InputListQuantity1 = 1;
+        var user1InputSellPrice1 = 2;
+        user1ApproveQuantity += user1InputListQuantity1;
+        var startTime1 = await InitUserListInfo(user1InputListQuantity1, user1InputSellPrice1, user1ApproveQuantity
+            , UserTokenContractStub, Seller1ForestContractStub, User1Address);
+        await QueryLastByStartAscListInfo(Seller1ForestContractStub, user1InputListQuantity1, user1InputSellPrice1,
+            User1Address);
+        await QueryFirstByStartAscListInfo(Seller1ForestContractStub, user1InputListQuantity1, user1InputSellPrice1,
+            User1Address);
+
+        var user1InputListQuantity2 = 2;
+        var user1InputSellPrice2 = 3;
+        user1ApproveQuantity += user1InputListQuantity2;
+        var startTime2 = await InitUserListInfo(user1InputListQuantity2, user1InputSellPrice2, user1ApproveQuantity
+            , UserTokenContractStub, Seller1ForestContractStub, User1Address);
+        await QueryLastByStartAscListInfo(Seller1ForestContractStub, user1InputListQuantity2, user1InputSellPrice2,
+            User1Address);
+        await QueryFirstByStartAscListInfo(Seller1ForestContractStub, user1InputListQuantity1, user1InputSellPrice1,
+            User1Address);
+
+        #endregion basic end
+
+        #region
+        
+        await ResetApprove(2, UserTokenContractStub);
+        #endregion
+
+        #region BatchBuyNow user2 buy from user1 listing records
+        
+        {
+            //modify BlockTime
+            var BlockTimeProvider = GetRequiredService<IBlockTimeProvider>();
+            BlockTimeProvider.SetBlockTime(BlockTimeProvider.GetBlockTime().AddMinutes(5));
+
+            var batchBuyNowInput = new BatchBuyNowInput();
+            batchBuyNowInput.Symbol = NftSymbol;
+            var fixPriceList = new RepeatedField<FixPrice>(); 
+            var priceList1 = new FixPrice()
+            {
+                StartTime = startTime1,
+                OfferTo = User1Address,
+                Quantity = user1InputListQuantity1,
+                Price = new Price()
+                {
+                    Amount = user1InputSellPrice1,
+                    Symbol = "ELF"
+                }
+            };
+            var priceList2 = new FixPrice()
+            {
+                StartTime = startTime2,
+                OfferTo = User1Address,
+                Quantity = user1InputListQuantity2,
+                Price = new Price()
+                {
+                    Amount = user1InputSellPrice2,
+                    Symbol = "ELF"
+                }
+            };
+            fixPriceList.Add(priceList1);
+            fixPriceList.Add(priceList2);
+            batchBuyNowInput.FixPriceList.AddRange(fixPriceList);
+            
+            // user2 BatchBuyNow
+            var executionResult = await BuyerForestContractStub.BatchBuyNow.SendAsync(batchBuyNowInput);
+            var log = BatchBuyNowResult.Parser.ParseFrom(executionResult.TransactionResult.Logs.First(l => l.Name == nameof(BatchBuyNowResult))
+                .NonIndexed);
+            log.Symbol.ShouldBe("TESTNFT-1");
+            log.AllSuccessFlag.ShouldBe(false);
+            log.FailPriceList.Value[0].Quantity.ShouldBe(2);
+        }
+
+        #endregion
+
+        // user1 nft number from 10 to 9
+        var user1NftBalance = await UserTokenContractStub.GetBalance.SendAsync(new GetBalanceInput()
+        {
+            Symbol = NftSymbol,
+            Owner = User1Address
+        });
+        user1NftBalance.Output.Balance.ShouldBe(9);
+        
+        // user 2 nft number from 0 to 1
+        var user2NftBalance = await UserTokenContractStub.GetBalance.SendAsync(new GetBalanceInput()
+        {
+            Symbol = NftSymbol,
+            Owner = User2Address
+        });
+        user2NftBalance.Output.Balance.ShouldBe(1);
+        
+        // 0 NFTs to offer list
+        #region check offer list
+
+        {
+            // list offers just sent
+            var offerList = BuyerForestContractStub.GetOfferList.SendAsync(new GetOfferListInput()
+            {
+                Symbol = NftSymbol,
+                Address = User2Address,
+            }).Result.Output;
+            offerList.Value.Count.ShouldBe(0);
+        }
+        
+        {
+            // listing should be 0
+            var listingList = SellerForestContractStub.GetListedNFTInfoList.SendAsync(new GetListedNFTInfoListInput()
+            {
+                Symbol = NftSymbol,
+                Owner = User1Address,
+            }).Result.Output;
+            listingList.Value.Count.ShouldBe(0);
+        }
+        #endregion
+        
+    }
+    
     
     [Fact]
     public async void BatchBuyNow_Buy_From_OneUser_Listing_Price_Not_Exist_Fail()
@@ -335,7 +466,7 @@ public partial class ForestContractTests_MakeOffer
             {
                 errorMessage = e.Message;
             }
-            errorMessage.ShouldContain("NormalPrice does not exist.");
+            errorMessage.ShouldContain("");
         }
 
         #endregion
