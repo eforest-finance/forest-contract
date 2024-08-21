@@ -33,7 +33,8 @@ public partial class ForestContract
             Owner = Context.Sender
         });
         Assert(balance.Balance >= input.Quantity, "Check sender NFT balance failed.");
-        
+        AssertBalanceEnoughForList(input.Symbol, Context.Sender, balance.Balance, input.Quantity);
+
         AssertAllowanceInsufficient(input.Symbol, Context.Sender, input.Quantity);
         
         var duration = AdjustListDuration(input.Duration);
