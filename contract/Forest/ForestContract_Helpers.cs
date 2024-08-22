@@ -425,4 +425,31 @@ public partial class ForestContract
 
         return State.RoyaltyInfoMap[symbol];
     }
+    
+    private long GetEffectiveNFTListedTotalAmount(Address address, string symbol)
+    {
+        Assert(address != null, $"Invalid param Address");
+        Assert(symbol != null, $"Invalid param Symbol");
+
+        var listedNftInfoList = State.ListedNFTInfoListMap[symbol][address];
+        var totalAmount = 0L;
+        if (listedNftInfoList != null)
+        {
+            foreach (var listedNftInfo in listedNftInfoList.Value)
+            {
+                var expireTime = listedNftInfo.Duration.StartTime.AddHours(listedNftInfo.Duration.DurationHours).AddMinutes(listedNftInfo.Duration.DurationMinutes);
+                if(expireTime >= Context.CurrentBlockTime)
+                {
+                    totalAmount = totalAmount.Add(listedNftInfo.Quantity);
+                }
+            }
+        }
+        return  totalAmount;
+    }
+    
+    private void AssertBalanceEnoughForList(string symbol, Address address, long currentBalance, long amount)
+    {
+        var listedAmount = GetEffectiveNFTListedTotalAmount(address, symbol);
+        Assert(currentBalance >= (listedAmount + amount), $"The balance is not enough. Please reset it.");
+    }
 }
