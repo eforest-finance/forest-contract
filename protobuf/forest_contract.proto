@@ -327,6 +327,7 @@ message BatchBuyNowResult{
   string symbol = 1;
   bool all_success_flag = 2;
   FailPriceList fail_price_list = 3;
+  int64 total_deal_amount_price = 4;
 }
 
 message FailPriceList {

@@ -229,6 +229,7 @@ public partial class ForestContract
         Assert(nftInfo != null && !string.IsNullOrWhiteSpace(nftInfo.Symbol), "Invalid symbol data");
         var userBalanceDic = new Dictionary<string,long>();
         var failPriceDic = new Dictionary<long, FailPrice>();
+        var batchDealAmount = 0l;
         foreach (var fixPrice in input.FixPriceList)
         {
            SingleMakeOfferForBatchBuyNow(input.Symbol, new FixPrice()
@@ -237,7 +238,8 @@ public partial class ForestContract
                 Quantity = fixPrice.Quantity,
                 Price = fixPrice.Price,
                 StartTime = fixPrice.StartTime
-            }, userBalanceDic, failPriceDic);
+            }, userBalanceDic, failPriceDic,out var dealTotalAmount);
+           batchDealAmount += dealTotalAmount;
         }
 
         Context.Fire(new BatchBuyNowResult
@@ -247,7 +249,8 @@ public partial class ForestContract
             FailPriceList = new FailPriceList()
             {
                 Value = { failPriceDic?.Values?.ToList() }
-            }
+            },
+            TotalDealAmountPrice = batchDealAmount
         });
 
         return new Empty();
@@ -255,8 +258,10 @@ public partial class ForestContract
 
     private void SingleMakeOfferForBatchBuyNow(string symbol, FixPrice inputFixPrice
         , Dictionary<string,long> userBalanceDic
-        , Dictionary<long, FailPrice> failPriceDic)
+        , Dictionary<long, FailPrice> failPriceDic,
+        out long dealTotalAmount)
     {
+        dealTotalAmount = 0;
         Assert(inputFixPrice.Quantity > 0, "Invalid param Quantity.");
         Assert(inputFixPrice.Price.Amount > 0, "Invalid price amount.");
         Assert(inputFixPrice.OfferTo != null, "Invalid param OfferTo.");
@@ -266,7 +271,7 @@ public partial class ForestContract
         });
         Assert(nftInfo != null && !string.IsNullOrWhiteSpace(nftInfo.Symbol), "Invalid symbol data");
         Assert(inputFixPrice.Quantity <= nftInfo?.TotalSupply, "Offer quantity beyond totalSupply");
-
+    
         var balance = State.TokenContract.GetBalance.Call(new GetBalanceInput
         {
             Symbol = inputFixPrice.Price.Symbol,
@@ -300,8 +305,8 @@ public partial class ForestContract
             var listedNftInfo = affordableNftInfoList[dealResult.Index];
 
             TryDealWithFixedPriceForBatch(sender, symbol, inputFixPrice, dealResult
-                , listedNftInfo, userBalanceDic, out var dealQuantity,nftInfo.Decimals);
-
+                , listedNftInfo, userBalanceDic, out var dealQuantity,nftInfo.Decimals, out var dealAmount);
+            dealTotalAmount += dealAmount;
             long realFail = dealResult.Quantity - dealQuantity;
             if (realFail > 0)
             {
@@ -681,7 +686,7 @@ public partial class ForestContract
     /// Sender is buyer.
     /// </summary>
     private bool TryDealWithFixedPriceForBatch(Address sender, string symbol, FixPrice input, DealResult dealResult,
-        ListedNFTInfo listedNftInfo, Dictionary<string,long> userBalanceDic ,out long actualQuantity,int decimals)
+        ListedNFTInfo listedNftInfo, Dictionary<string,long> userBalanceDic ,out long actualQuantity,int decimals, out long dealAmount)
     {
         var userBalanceKey = symbol + input.OfferTo;
         long senderBalanceCount;
@@ -703,6 +708,7 @@ public partial class ForestContract
         if (senderBalanceCount== 0)
         {
             actualQuantity = 0;
+            dealAmount = 0;
             return false;
         } 
         var usePrice = input.Price.Clone();
@@ -712,6 +718,7 @@ public partial class ForestContract
         
         if (actualQuantity == 0)
         {
+            dealAmount = 0;
             return false;
         }
 
@@ -719,6 +726,7 @@ public partial class ForestContract
         userBalanceDic[userBalanceKey]=senderBalanceCount;
 
         var totalAmount = usePrice.Amount.Mul(NumberHelper.DivideByPowerOfTen(actualQuantity, decimals));
+        dealAmount = totalAmount;
         PerformDeal(new PerformDealInput
         {
             NFTFrom = input.OfferTo,
