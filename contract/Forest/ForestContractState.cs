@@ -66,6 +66,15 @@ namespace Forest
         public SingletonState<int> MaxBatchCancelOfferCount { get; set; }
         
         public SingletonState<int> MaxBatchCancelListCount { get; set; }
+        
+        public SingletonState<string> TreePointsHashVerifyKey { get; set; }
+        /// Address  ->  TreePointsInfo
+        public MappedState<Address, TreePointsInfo> TreePointsMap { get; set; }
+        /// Address  ->  timestamp 13
+        public MappedState<Address, long> TreePointsAddTimeMap { get; set; }
+        /// Address  ->  activityId -> timestamp 13
+        public MappedState<Address, string, long> TreePointsActivityClaimTimeMap { get; set; }
+
 
     }
 }

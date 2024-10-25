@@ -156,4 +156,9 @@ public partial class ForestContract
     {
         return new Int32Value { Value = State.MaxBatchCancelListCount.Value };
     }
+    
+    public override TreePointsInfo GetTreePoints(Address input)
+    {
+        return State.TreePointsMap[input];
+    }
 }

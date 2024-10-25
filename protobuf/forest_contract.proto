@@ -146,6 +146,19 @@ service ForestContract {
   rpc GetMaxBatchCancelListCount(google.protobuf.Empty) returns (google.protobuf.Int32Value){
     option (aelf.is_view) = true;
   }
+
+  rpc AddTreePoints(AddTreePointsInput) returns (google.protobuf.Empty){
+  }
+
+  rpc ClaimTreePoints(ClaimTreePointsInput) returns (google.protobuf.Empty){
+  }
+
+  rpc GetTreePoints(aelf.Address) returns (TreePointsInfo){
+    option (aelf.is_view) = true;
+  }
+  
+  rpc SetTreePointsHashVerifyKey(google.protobuf.StringValue)returns (google.protobuf.Empty){
+  }
 }
 
 // Structs.
@@ -234,6 +247,11 @@ message WhitelistInfoList{
   repeated WhitelistInfo whitelists = 1;
 }
 
+message TreePointsInfo {
+  aelf.Address owner = 1;
+  int64 points = 2;
+  
+}
 // Inputs.
 
 message InitializeInput {
@@ -460,6 +478,35 @@ message CreateArtInfo {
   Price cost_price = 8;
   string painting_style = 9;
 }
+message AddTreePointsInput {
+  aelf.Address address = 1;
+  int64 points = 2;
+  int32 points_type =3;
+  int64 op_time = 4;
+  string request_hash = 5;
+}
+
+message ClaimTreePointsInput {
+  aelf.Address address = 1;
+  int64 points = 2;
+  int32 points_type =3;
+  string activity_id = 4;
+  int64 op_time = 5;
+  TreeReward reward = 6;
+  string request_hash = 7;
+}
+
+message TreeReward {
+  string symbol = 1;
+  int64 amount = 2;
+}
+
+enum TreePointsType {
+  NORMALONE = 0;
+  NORMALTWO = 1;
+  INVITE = 2;
+}
+
 
 // Events
 
@@ -630,4 +677,28 @@ message ArtCreated {
   Price cost_price = 8;
   string painting_style = 9;
 }
+
+message TreePointsAdded {
+  option (aelf.is_event) = true;
+  aelf.Address owner = 1;
+  int64 points = 2;
+  int32 points_type = 3;
+  int64 op_time = 4;
+  int64 total_points = 5;
+  string request_hash = 6;
+}
+
+message TreePointsRemoved {
+  option (aelf.is_event) = true;
+  aelf.Address owner = 1;
+  int64 points = 2;
+  int32 points_type = 3;
+  string activity_id = 4;
+  int64 op_time = 5;
+  string reward_symbol = 6;
+  int64 reward_amount = 7;
+  int64 total_points = 8;
+  string request_hash = 9;
+}
+
 
