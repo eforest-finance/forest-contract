@@ -91,11 +91,10 @@ public partial class ForestContract
             Amount = input.Reward.Amount
         });
         //event
-        Context.Fire(new TreePointsRemoved()
+        Context.Fire(new TreePointsClaimed()
         {
             Owner = input.Address,
             Points = input.Points,
-            PointsType = input.PointsType,
             ActivityId = input.ActivityId,
             OpTime = input.OpTime,
             RewardSymbol = input.Reward.Symbol,
@@ -117,6 +116,43 @@ public partial class ForestContract
         }
         AssertSenderIsAdmin();
         State.TreePointsHashVerifyKey.Value = input.Value;
+        return new Empty();
+    }
+    
+    public override Empty TreeLevelUpgrade(TreeLevelUpgradeInput input)
+    {
+        AssertContractInitialized();
+        Assert(input != null, "Invalid param");
+        Assert(!input.Address.Value.IsNullOrEmpty(), "Invalid param Address");
+        Assert(input.Points > 0, "Invalid param Points");
+        Assert(!string.IsNullOrEmpty(input.RequestHash), "Invalid param RequestHash");
+        Assert(input.OpTime != null && input.OpTime > 0, "Invalid param OpTime");
+        Assert(input.UpgradeLevel > 0, $"Invalid UpgradeLevel, Should be greater than 0");
+        Assert(Context.Sender == input.Address, "Param Address is not Sender");
+        
+        var requestStr = string.Concat(input.Address, input.Points, input.OpTime, input.UpgradeLevel);
+        CheckPointsRequestHash(requestStr, input.RequestHash);
+        
+        var lastOpTime = State.TreePointsLevelUpgradeTimeMap[input.Address];
+        Assert(input.OpTime > lastOpTime, "Invalid param OpTime");
+
+        var treePointsInfo = State.TreePointsMap[input.Address];
+        Assert(treePointsInfo != null, "your points is zero");
+        Assert(treePointsInfo.Points >= input.Points, "You don't have enough points");
+        treePointsInfo.Points -= input.Points;
+        State.TreePointsMap[input.Address] = treePointsInfo;
+        State.TreePointsLevelUpgradeTimeMap[input.Address] = input.OpTime;
+
+        //event
+        Context.Fire(new TreeLevelUpgraded()
+        {
+            Owner = input.Address,
+            Points = input.Points,
+            OpTime = input.OpTime,
+            UpgradeLevel = input.UpgradeLevel,
+            TotalPoints = treePointsInfo.Points,
+            RequestHash = input.RequestHash
+        });
         return new Empty();
     }
 }

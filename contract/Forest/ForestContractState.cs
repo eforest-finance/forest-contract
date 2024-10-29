@@ -74,6 +74,8 @@ namespace Forest
         public MappedState<Address, long> TreePointsAddTimeMap { get; set; }
         /// Address  ->  activityId -> timestamp 13
         public MappedState<Address, string, long> TreePointsActivityClaimTimeMap { get; set; }
+        /// Address  ->  timestamp 13
+        public MappedState<Address, long> TreePointsLevelUpgradeTimeMap { get; set; }
 
 
     }
