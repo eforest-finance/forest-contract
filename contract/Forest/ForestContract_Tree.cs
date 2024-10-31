@@ -64,7 +64,8 @@ public partial class ForestContract
         Assert(input.Reward != null && !string.IsNullOrEmpty(input.Reward.Symbol) && input.Reward.Amount > 0, "Param Address is not Sender");
         Assert(Context.Sender == input.Address, "Param Address is not Sender");
         
-        var requestStr = string.Concat(input.Address, input.Points, input.PointsType, input.OpTime, input.ActivityId, input.Reward.Symbol, input.Reward.Amount);
+        var requestStr = string.Concat(input.Address, input.Points, input.PointsType, input.OpTime);
+        requestStr = string.Concat(requestStr, input.ActivityId, input.Reward.Symbol, input.Reward.Amount);
         CheckPointsRequestHash(requestStr, input.RequestHash);
         
         var lastOpTime = State.TreePointsActivityClaimTimeMap[input.Address][input.ActivityId];
