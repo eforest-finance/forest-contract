@@ -492,11 +492,10 @@ message AddTreePointsInput {
 message ClaimTreePointsInput {
   aelf.Address address = 1;
   int64 points = 2;
-  int32 points_type =3;
-  string activity_id = 4;
-  int64 op_time = 5;
-  TreeReward reward = 6;
-  string request_hash = 7;
+  string activity_id = 3;
+  int64 op_time = 4;
+  TreeReward reward = 5;
+  string request_hash = 6;
 }
 
 message TreeLevelUpgradeInput {

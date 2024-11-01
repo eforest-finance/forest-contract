@@ -17,7 +17,7 @@ public partial class ForestContract
         Assert(input.OpTime != null && input.OpTime > 0, "Invalid param OpTime");
         Assert(Context.Sender == input.Address, "Param Address is not Sender");
         
-        var requestStr = string.Concat(input.Address, input.Points, input.PointsType, input.OpTime);
+        var requestStr = string.Concat(input.Address.ToBase58(), input.Points, input.PointsType, input.OpTime);
         CheckPointsRequestHash(requestStr, input.RequestHash);
         
         var lastAddTime = State.TreePointsAddTimeMap[input.Address];
@@ -33,7 +33,7 @@ public partial class ForestContract
             treePointsInfo = new TreePointsInfo()
             {
                 Owner = input.Address,
-                Points = input.PointsType
+                Points = input.Points
             };
         }
         
@@ -57,15 +57,15 @@ public partial class ForestContract
         AssertContractInitialized();
         Assert(input != null, "Invalid param");
         Assert(!input.Address.Value.IsNullOrEmpty(), "Invalid param Address");
-        Assert(input.Points > 0, "Invalid param Points");
+        Assert(input.Points >= 0, "Invalid param Points");
         Assert(!string.IsNullOrEmpty(input.ActivityId), "Invalid param ActivityId");
         Assert(!string.IsNullOrEmpty(input.RequestHash), "Invalid param RequestHash");
         Assert(input.OpTime != null && input.OpTime > 0, "Invalid param OpTime");
-        Assert(input.Reward != null && !string.IsNullOrEmpty(input.Reward.Symbol) && input.Reward.Amount > 0, "Param Address is not Sender");
+        Assert(input.Reward != null && !string.IsNullOrEmpty(input.Reward.Symbol) && input.Reward.Amount > 0, "Invalid param Reward");
         Assert(Context.Sender == input.Address, "Param Address is not Sender");
         
-        var requestStr = string.Concat(input.Address, input.Points, input.PointsType, input.OpTime);
-        requestStr = string.Concat(requestStr, input.ActivityId, input.Reward.Symbol, input.Reward.Amount);
+        var requestStr = string.Concat(input.Address.ToBase58(), input.ActivityId,input.Points, input.OpTime);
+        requestStr = string.Concat(requestStr, input.Reward.Symbol, input.Reward.Amount);
         CheckPointsRequestHash(requestStr, input.RequestHash);
         
         var lastOpTime = State.TreePointsActivityClaimTimeMap[input.Address][input.ActivityId];
@@ -131,7 +131,7 @@ public partial class ForestContract
         Assert(input.UpgradeLevel > 0, $"Invalid UpgradeLevel, Should be greater than 0");
         Assert(Context.Sender == input.Address, "Param Address is not Sender");
         
-        var requestStr = string.Concat(input.Address, input.Points, input.OpTime, input.UpgradeLevel);
+        var requestStr = string.Concat(input.Address.ToBase58(), input.Points, input.OpTime, input.UpgradeLevel);
         CheckPointsRequestHash(requestStr, input.RequestHash);
         
         var lastOpTime = State.TreePointsLevelUpgradeTimeMap[input.Address];
