@@ -33,7 +33,8 @@ public partial class ForestContract
             treePointsInfo = new TreePointsInfo()
             {
                 Owner = input.Address,
-                Points = input.Points
+                Points = input.Points,
+                Level = 1
             };
         }
         
@@ -129,7 +130,7 @@ public partial class ForestContract
         Assert(input.Points > 0, "Invalid param Points");
         Assert(!string.IsNullOrEmpty(input.RequestHash), "Invalid param RequestHash");
         Assert(input.OpTime != null && input.OpTime > 0, "Invalid param OpTime");
-        Assert(input.UpgradeLevel > 0, $"Invalid UpgradeLevel, Should be greater than 0");
+        Assert(input.UpgradeLevel > 0, "Invalid UpgradeLevel, Should be greater than 0");
         Assert(Context.Sender == input.Address, "Param Address is not Sender");
         
         var requestStr = string.Concat(input.Address.ToBase58(), input.Points, input.OpTime, input.UpgradeLevel);
@@ -141,6 +142,8 @@ public partial class ForestContract
         var treePointsInfo = State.TreePointsMap[input.Address];
         Assert(treePointsInfo != null, "your points is zero");
         Assert(treePointsInfo.Points >= input.Points, "You don't have enough points");
+        Assert(treePointsInfo.Level < input.UpgradeLevel, $"You are already level{input.UpgradeLevel}");
+
         treePointsInfo.Points -= input.Points;
         State.TreePointsMap[input.Address] = treePointsInfo;
         State.TreePointsLevelUpgradeTimeMap[input.Address] = input.OpTime;
