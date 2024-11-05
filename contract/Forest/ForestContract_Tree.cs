@@ -69,6 +69,7 @@ public partial class ForestContract
         CheckPointsRequestHash(requestStr, input.RequestHash);
         
         var lastOpTime = State.TreePointsActivityClaimTimeMap[input.Address][input.ActivityId];
+        Assert(lastOpTime == 0, "You have already participated in this activity");
         Assert(input.OpTime > lastOpTime, "Invalid param OpTime");
 
         var treePointsInfo = State.TreePointsMap[input.Address];
