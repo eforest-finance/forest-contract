@@ -146,6 +146,22 @@ service ForestContract {
   rpc GetMaxBatchCancelListCount(google.protobuf.Empty) returns (google.protobuf.Int32Value){
     option (aelf.is_view) = true;
   }
+
+  rpc AddTreePoints(AddTreePointsInput) returns (google.protobuf.Empty){
+  }
+
+  rpc ClaimTreePoints(ClaimTreePointsInput) returns (google.protobuf.Empty){
+  }
+
+  rpc TreeLevelUpgrade(TreeLevelUpgradeInput) returns (google.protobuf.Empty){
+  }
+
+  rpc GetTreePoints(aelf.Address) returns (TreePointsInfo){
+    option (aelf.is_view) = true;
+  }
+  
+  rpc SetTreePointsHashVerifyKey(google.protobuf.StringValue)returns (google.protobuf.Empty){
+  }
 }
 
 // Structs.
@@ -234,6 +250,11 @@ message WhitelistInfoList{
   repeated WhitelistInfo whitelists = 1;
 }
 
+message TreePointsInfo {
+  aelf.Address owner = 1;
+  int64 points = 2;
+  int64 level = 3;
+}
 // Inputs.
 
 message InitializeInput {
@@ -460,6 +481,42 @@ message CreateArtInfo {
   Price cost_price = 8;
   string painting_style = 9;
 }
+message AddTreePointsInput {
+  aelf.Address address = 1;
+  int64 points = 2;
+  int32 points_type =3;
+  int64 op_time = 4;
+  string request_hash = 5;
+}
+
+message ClaimTreePointsInput {
+  aelf.Address address = 1;
+  int64 points = 2;
+  string activity_id = 3;
+  int64 op_time = 4;
+  TreeReward reward = 5;
+  string request_hash = 6;
+}
+
+message TreeLevelUpgradeInput {
+  aelf.Address address = 1;
+  int64 points = 2;
+  int64 op_time = 3;
+  int32 upgrade_level = 4;
+  string request_hash = 5;
+}
+
+message TreeReward {
+  string symbol = 1;
+  int64 amount = 2;
+}
+
+enum TreePointsType {
+  NORMALONE = 0;
+  NORMALTWO = 1;
+  INVITE = 2;
+}
+
 
 // Events
 
@@ -630,4 +687,38 @@ message ArtCreated {
   Price cost_price = 8;
   string painting_style = 9;
 }
+
+message TreePointsAdded {
+  option (aelf.is_event) = true;
+  aelf.Address owner = 1;
+  int64 points = 2;
+  int32 points_type = 3;
+  int64 op_time = 4;
+  int64 total_points = 5;
+  string request_hash = 6;
+}
+
+message TreePointsClaimed {
+  option (aelf.is_event) = true;
+  aelf.Address owner = 1;
+  int64 points = 2;
+  string activity_id = 3;
+  int64 op_time = 4;
+  string reward_symbol = 5;
+  int64 reward_amount = 6;
+  int64 total_points = 7;
+  string request_hash = 8;
+}
+
+message TreeLevelUpgraded {
+  option (aelf.is_event) = true;
+  aelf.Address owner = 1;
+  int64 points = 2;
+  int32 upgrade_level = 3;
+  int64 op_time = 4;
+  int64 total_points = 5;
+  string request_hash = 6;
+}
+
+
 
