@@ -452,4 +452,12 @@ public partial class ForestContract
         var listedAmount = GetEffectiveNFTListedTotalAmount(address, symbol);
         Assert(currentBalance >= (listedAmount + amount), $"The balance is not enough. Please reset it.");
     }
+    
+    private void CheckPointsRequestHash(string request, string hash)
+    {
+        var key = State.TreePointsHashVerifyKey.Value;
+        Assert(!string.IsNullOrEmpty(key), "Need SetTreePointsHashVerifyKey");
+        var requestHash = HashHelper.ComputeFrom(string.Concat(request, key));
+        Assert(hash.Equals(requestHash.ToHex()), "Unverified requests");
+    }
 }
