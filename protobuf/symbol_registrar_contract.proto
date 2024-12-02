@@ -32,6 +32,12 @@ service SymbolRegistrarContract {
 
     rpc Buy(BuyInput) returns (google.protobuf.Empty){
     }
+    
+    rpc GeneralSeedRenew(GeneralSeedRenewInput) returns (google.protobuf.Empty){
+    }
+    
+    rpc SpecialSeedRenew(SpecialSeedRenewInput) returns (google.protobuf.Empty){
+    }
 
     // for Parliament contract
     // when proposal has been approved special-seeds will be add
@@ -269,12 +275,22 @@ message SpecialSeed {
     map<string, string> external_info = 8;
 }
 
-
 message BuyInput{
     // the symbol to buy
     string symbol = 1;
     // which address to issue
     aelf.Address issue_to = 2;
+}
+
+message GeneralSeedRenewInput{
+    //seedSymbol
+    string seed_symbol = 1;
+    Price price = 2;
+}
+
+message SpecialSeedRenewInput{
+    string seed_symbol = 1;
+    Price price = 2;
 }
 
 message ControllerList{
@@ -352,6 +368,15 @@ message Bought {
     aelf.Address buyer = 1;
     string symbol = 2;
     Price price = 4;
+}
+
+message SeedRenewed {
+    option (aelf.is_event) = true;
+    aelf.Address buyer = 1;
+    string symbol = 2;
+    string seed_symbol = 3;
+    int64 exp_time = 4;
+    Price price = 5;
 }
 
 message SaleControllerAdded {

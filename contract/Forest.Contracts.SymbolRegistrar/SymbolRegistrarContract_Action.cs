@@ -124,6 +124,11 @@ namespace Forest.Contracts.SymbolRegistrar
                 ImageUrl = seedInfo.ImageUrl
             });
         }
+        
+        private void DoRenewSeed(string seedSymbol, long expireTime = 0)
+        {
+           //State.TokenContract
+        }
 
         private bool CreateSeedToken(Address issuer, string symbol, long expireTime = 0)
         {
@@ -213,5 +218,52 @@ namespace Forest.Contracts.SymbolRegistrar
             State.ProxyAccountHash.Value = proxyAccount.ProxyAccountHash;
             return proxyAccount.ProxyAccountHash;
         }
+        
+        public override Empty GeneralSeedRenew(GeneralSeedRenewInput input)
+        {
+            AssertContractInitialize();
+            AssertSeedSymbolPattern(input.SeedSymbol);
+            CheckSeedBalanceExisted(input.SeedSymbol);
+            var seedTokenInfo = GetTokenInfo(input.SeedSymbol);
+            Assert(seedTokenInfo.Symbol.Length > 1, "Seed Symbol not exists");
+            var seedOwnedSymbol = seedTokenInfo.ExternalInfo.Value[SymbolRegistrarContractConstants.SeedOwnedSymbolExternalInfoKey];
+            var seedExpTime = long.Parse(seedTokenInfo.ExternalInfo.Value[SymbolRegistrarContractConstants.SeedExpireTimeExternalInfoKey]);
+            Assert(!string.IsNullOrWhiteSpace(seedOwnedSymbol) && seedExpTime > Context.CurrentBlockTime.Seconds, "symbol seed not existed or expired");
+            
+            var specialSeed = State.SpecialSeedMap[seedOwnedSymbol];
+            Assert(specialSeed == null, "Special seed " + input.SeedSymbol + " not support renew.");
+            
+            var price = GetDealPrice(seedOwnedSymbol);
+            Assert(price != null, "Symbol price not exits");
+            Assert(price.Symbol == input.Price.Symbol && price.Amount == input.Price.Amount, "input symbol price not correct");
+
+            State.TokenContract.TransferFrom.Send(new TransferFromInput()
+            {
+                From = Context.Sender,
+                To = State.ReceivingAccount.Value,
+                Symbol = price.Symbol,
+                Amount = price.Amount,
+            });
+
+            var nextExpTime = seedExpTime + State.SeedExpirationConfig.Value;
+            DoRenewSeed(input.SeedSymbol, nextExpTime);
+
+            Context.Fire(new SeedRenewed()
+            {
+                Buyer = Context.Sender,
+                Symbol = seedOwnedSymbol,
+                SeedSymbol = input.SeedSymbol,
+                ExpTime = nextExpTime,
+                Price = new Price
+                {
+                    Symbol = input.Price.Symbol,
+                    Amount = input.Price.Amount
+                }
+            });
+            
+            return new Empty();
+        }
     }
+    
+    
 }
