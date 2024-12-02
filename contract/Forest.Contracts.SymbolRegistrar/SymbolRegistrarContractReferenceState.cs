@@ -20,5 +20,7 @@ namespace Forest.Contracts.SymbolRegistrar
             get;
             set;
         }
+        
+        internal TokenContractImplContainer.TokenContractImplReferenceState TokenImplContract { get; set; }
     }
 }

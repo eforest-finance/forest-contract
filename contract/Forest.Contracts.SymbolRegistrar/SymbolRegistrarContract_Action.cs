@@ -127,7 +127,13 @@ namespace Forest.Contracts.SymbolRegistrar
         
         private void DoRenewSeed(string seedSymbol, long expireTime = 0)
         {
-           //State.TokenContract
+            
+            State.TokenImplContract.ExtendSeedExpirationTime.Send(
+                new ExtendSeedExpirationTimeInput
+                {
+                    Symbol = seedSymbol,
+                    ExpirationTime = expireTime
+                });
         }
 
         private bool CreateSeedToken(Address issuer, string symbol, long expireTime = 0)
