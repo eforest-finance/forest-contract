@@ -40,5 +40,10 @@ namespace Forest.Contracts.SymbolRegistrar
         public SingletonState<IssueChainList> IssueChainList { get; set; }  
         public SingletonState<Address> SeedCollectionOwner { get; set; }
         public SingletonState<Hash> ProxyAccountHash { get; set; }
+        
+        public SingletonState<string> SeedRenewHashVerifyKey { get; set; }
+        //seedSymbol -> renewTime
+        public MappedState<string, long> SeedRenewTimeMap { get; set; }
+
     }
 }

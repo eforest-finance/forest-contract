@@ -225,7 +225,7 @@ namespace Forest.Contracts.SymbolRegistrar
             return proxyAccount.ProxyAccountHash;
         }
         
-        public override Empty GeneralSeedRenew(GeneralSeedRenewInput input)
+        public override Empty RegularSeedRenew(RegularSeedRenewInput input)
         {
             AssertContractInitialize();
             AssertSeedSymbolPattern(input.SeedSymbol);
@@ -256,19 +256,129 @@ namespace Forest.Contracts.SymbolRegistrar
 
             Context.Fire(new SeedRenewed()
             {
+                ChainId = Context.ChainId,
                 Buyer = Context.Sender,
                 Symbol = seedOwnedSymbol,
                 SeedSymbol = input.SeedSymbol,
                 ExpTime = nextExpTime,
+                OriginalExpTime = seedExpTime,
                 Price = new Price
                 {
                     Symbol = input.Price.Symbol,
                     Amount = input.Price.Amount
-                }
+                },
+                SeedType = SeedType.Regular,
+                RenewType = RenewType.Self
             });
             
             return new Empty();
         }
+        
+        public override Empty SpecialSeedRenew(SpecialSeedRenewInput input)
+        {
+            AssertContractInitialize();
+            AssertSeedSymbolPattern(input.SeedSymbol);
+            CheckSeedBalanceExisted(input.SeedSymbol);
+            Assert(Context.Sender == input.Buyer, "param owner not sender");
+            var seedTokenInfo = GetTokenInfo(input.SeedSymbol);
+            Assert(seedTokenInfo.Symbol.Length > 1, "Seed Symbol not exists");
+            var seedOwnedSymbol = seedTokenInfo.ExternalInfo.Value[SymbolRegistrarContractConstants.SeedOwnedSymbolExternalInfoKey];
+            var seedExpTime = long.Parse(seedTokenInfo.ExternalInfo.Value[SymbolRegistrarContractConstants.SeedExpireTimeExternalInfoKey]);
+            Assert(!string.IsNullOrWhiteSpace(seedOwnedSymbol) && seedExpTime > Context.CurrentBlockTime.Seconds, "symbol seed not existed or expired");
+            
+            var specialSeed = State.SpecialSeedMap[seedOwnedSymbol];
+            Assert(specialSeed != null, "Not Special seed " + input.SeedSymbol + " not support renew.");
+            var requestStr = string.Concat(input.Buyer.ToBase58(), input.SeedSymbol);
+            requestStr = string.Concat(requestStr, input.Price.Symbol, input.Price.Amount, input.OpTime);
+            CheckSeedRenewRequestHash(requestStr, input.RequestHash);
+            var lastAddTime = State.SeedRenewTimeMap[input.SeedSymbol];
+            Assert(input.OpTime > lastAddTime, "Invalid param OpTime");
+            State.SeedRenewTimeMap[input.SeedSymbol] = input.OpTime;
+            
+            var price = input.Price;
+            Assert(price != null, "Symbol price not exits");
+            var priceTokenInfo = GetTokenInfo(price.Symbol);
+            Assert(priceTokenInfo != null, "input price symbol not correct");
+            Assert(price.Amount > 0, "input price amount not correct");
+            
+            State.TokenContract.TransferFrom.Send(new TransferFromInput()
+            {
+                From = Context.Sender,
+                To = State.ReceivingAccount.Value,
+                Symbol = price.Symbol,
+                Amount = price.Amount,
+            });
+
+            var nextExpTime = seedExpTime + State.SeedExpirationConfig.Value;
+            DoRenewSeed(input.SeedSymbol, nextExpTime);
+
+            Context.Fire(new SeedRenewed()
+            {
+                ChainId = Context.ChainId,
+                Buyer = Context.Sender,
+                Symbol = seedOwnedSymbol,
+                SeedSymbol = input.SeedSymbol,
+                ExpTime = nextExpTime,
+                OriginalExpTime = seedExpTime,
+                Price = new Price
+                {
+                    Symbol = input.Price.Symbol,
+                    Amount = input.Price.Amount
+                },
+                SeedType = SeedType.Unique,
+                RenewType = RenewType.Self
+            });
+            
+            return new Empty();
+        }
+        
+        
+         public override Empty BidFinishSeedRenew(BidFinishSeedRenewInput input)
+        {
+            AssertContractInitialize();
+            AssertSeedSymbolPattern(input.SeedSymbol);
+            CheckSeedBalanceExisted(input.SeedSymbol);
+            var seedTokenInfo = GetTokenInfo(input.SeedSymbol);
+            Assert(seedTokenInfo.Symbol.Length > 1, "Seed Symbol not exists");
+            var seedOwnedSymbol = seedTokenInfo.ExternalInfo.Value[SymbolRegistrarContractConstants.SeedOwnedSymbolExternalInfoKey];
+            var seedExpTime = long.Parse(seedTokenInfo.ExternalInfo.Value[SymbolRegistrarContractConstants.SeedExpireTimeExternalInfoKey]);
+            Assert(!string.IsNullOrWhiteSpace(seedOwnedSymbol) && seedExpTime > Context.CurrentBlockTime.Seconds, "symbol seed not existed or expired");
+            Assert(input.BidFinishTime > seedExpTime && input.BidFinishTime < Context.CurrentBlockTime.Seconds, "bid finish time not correct");
+            
+            var specialSeed = State.SpecialSeedMap[seedOwnedSymbol];
+            Assert(specialSeed != null, "Not Special seed " + input.SeedSymbol + " not support renew.");
+            var requestStr = string.Concat(input.SeedSymbol, input.BidFinishTime, input.OpTime);
+            CheckSeedRenewRequestHash(requestStr, input.RequestHash);
+            var lastAddTime = State.SeedRenewTimeMap[input.SeedSymbol];
+            Assert(input.OpTime > lastAddTime, "Invalid param OpTime");
+            State.SeedRenewTimeMap[input.SeedSymbol] = input.OpTime;
+            
+            var nextExpTime = input.BidFinishTime + State.SeedExpirationConfig.Value;
+            DoRenewSeed(input.SeedSymbol, nextExpTime);
+
+            Context.Fire(new SeedRenewed()
+            {
+                ChainId = Context.ChainId,
+                Buyer = Context.Sender,
+                Symbol = seedOwnedSymbol,
+                SeedSymbol = input.SeedSymbol,
+                ExpTime = nextExpTime,
+                OriginalExpTime = seedExpTime,
+                SeedType = SeedType.Unique,
+                RenewType = RenewType.Bid
+            });
+            
+            return new Empty();
+        }
+        
+        private void CheckSeedRenewRequestHash(string request, string hash)
+        {
+            var key = State.SeedRenewHashVerifyKey.Value;
+            Assert(!string.IsNullOrEmpty(key), "Need SetTreePointsHashVerifyKey");
+            var requestHash = HashHelper.ComputeFrom(string.Concat(request, key));
+            Assert(hash.Equals(requestHash.ToHex()), "Unverified requests");
+        }
+        
     }
     
     

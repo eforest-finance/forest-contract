@@ -33,10 +33,13 @@ service SymbolRegistrarContract {
     rpc Buy(BuyInput) returns (google.protobuf.Empty){
     }
     
-    rpc GeneralSeedRenew(GeneralSeedRenewInput) returns (google.protobuf.Empty){
+    rpc RegularSeedRenew(RegularSeedRenewInput) returns (google.protobuf.Empty){
     }
     
     rpc SpecialSeedRenew(SpecialSeedRenewInput) returns (google.protobuf.Empty){
+    }
+
+    rpc BidFinishSeedRenew(BidFinishSeedRenewInput) returns (google.protobuf.Empty){
     }
 
     // for Parliament contract
@@ -94,7 +97,8 @@ service SymbolRegistrarContract {
 
     rpc RemoveIssueChain(IssueChainList) returns (google.protobuf.Empty) {
     }
-
+    rpc SetSeedRenewHashVerifyKey(google.protobuf.StringValue)returns (google.protobuf.Empty){
+    }
 
     // View
 
@@ -256,6 +260,11 @@ enum SeedType {
     REGULAR = 4;
 }
 
+enum RenewType {
+    SELF = 0;
+    BID = 1;
+}
+
 message SpecialSeed {
     // special seed
     SeedType seed_type = 1;
@@ -281,16 +290,26 @@ message BuyInput{
     // which address to issue
     aelf.Address issue_to = 2;
 }
-
-message GeneralSeedRenewInput{
+//REGULAR
+message RegularSeedRenewInput{
     //seedSymbol
     string seed_symbol = 1;
     Price price = 2;
 }
 
 message SpecialSeedRenewInput{
+    aelf.Address buyer = 1;
+    string seed_symbol = 2;
+    Price price = 3;
+    int64 op_time = 4;
+    string request_hash = 5;
+}
+
+message BidFinishSeedRenewInput{
     string seed_symbol = 1;
-    Price price = 2;
+    int64 bid_finish_time = 2;
+    int64 op_time = 3;
+    string request_hash = 4;
 }
 
 message ControllerList{
@@ -377,6 +396,10 @@ message SeedRenewed {
     string seed_symbol = 3;
     int64 exp_time = 4;
     Price price = 5;
+    int64 original_exp_time =6;
+    SeedType seed_type=7;
+    RenewType renew_type=8;
+    int32 chain_id = 9;
 }
 
 message SaleControllerAdded {

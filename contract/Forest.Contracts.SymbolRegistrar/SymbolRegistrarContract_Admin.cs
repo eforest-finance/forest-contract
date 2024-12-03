@@ -399,5 +399,20 @@ namespace Forest.Contracts.SymbolRegistrar
 
             return new Empty();
         }
+        
+        public override Empty SetSeedRenewHashVerifyKey(StringValue input)
+        {
+            AssertInitialized();
+            Assert(input != null && !string.IsNullOrEmpty(input.Value), "Invalid param key");
+            var key = State.SeedRenewHashVerifyKey.Value;
+            if (string.IsNullOrEmpty(key))
+            {
+                State.SeedRenewHashVerifyKey.Value = input.Value;
+                return new Empty();
+            }
+            AssertAdmin();
+            State.SeedRenewHashVerifyKey.Value = input.Value;
+            return new Empty();
+        }
     }
 }
