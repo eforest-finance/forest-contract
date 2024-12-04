@@ -66,7 +66,7 @@ namespace Forest.Contracts.SymbolRegistrar
             
             foreach (var c in symbolPartition[1])
             {
-                Assert(c >= 1 && c <= 9, "Invalid seed symbol suffix.");
+                Assert(c >= '1' && c <= '9', "Invalid seed symbol suffix.");
             }
         }
         
