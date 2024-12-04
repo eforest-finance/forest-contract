@@ -124,15 +124,26 @@ namespace Forest.Contracts.SymbolRegistrar
                 ImageUrl = seedInfo.ImageUrl
             });
         }
-        
         private void DoRenewSeed(string seedSymbol, long expireTime = 0)
         {
+            if (State.TokenImplContract.Value == null)
+            {
+                State.TokenImplContract.Value = State.TokenContract.Value;
+            }
+
+            var renewInput = new ExtendSeedExpirationTimeInput
+            {
+                Symbol = seedSymbol,
+                ExpirationTime = expireTime
+            };
             
-            State.TokenImplContract.ExtendSeedExpirationTime.Send(
-                new ExtendSeedExpirationTimeInput
+            State.ProxyAccountContract.ForwardCall.Send(
+                new ForwardCallInput
                 {
-                    Symbol = seedSymbol,
-                    ExpirationTime = expireTime
+                    ContractAddress = State.TokenContract.Value,
+                    MethodName = nameof(State.TokenImplContract.ExtendSeedExpirationTime),
+                    ProxyAccountHash = GetProxyAccountHash(),
+                    Args = renewInput.ToByteString()
                 });
         }
 

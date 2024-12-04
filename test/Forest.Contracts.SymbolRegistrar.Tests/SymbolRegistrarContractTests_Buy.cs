@@ -313,6 +313,20 @@ namespace Forest.Contracts.SymbolRegistrar
             res.ShouldNotBeNull();
             res.Message.ShouldContain("Symbol exists");
         }
-
+        
+        [Fact]
+        public async Task SeedRenew_Test ()
+        {
+            await Buy_success();
+            await User1SymbolRegistrarContractStub.RegularSeedRenew.SendAsync(new RegularSeedRenewInput()
+            {
+                SeedSymbol = "SEED-1",
+                Price = new Price()
+                {
+                    Symbol = "ELF",
+                    Amount = 4700000000
+                }
+            });
+        }
     }
 }
