@@ -348,13 +348,11 @@ namespace Forest.Contracts.SymbolRegistrar
         {
             AssertContractInitialize();
             AssertSeedSymbolPattern(input.SeedSymbol);
-            CheckSeedBalanceExisted(input.SeedSymbol);
             var seedTokenInfo = GetTokenInfo(input.SeedSymbol);
             Assert(seedTokenInfo.Symbol.Length > 1, "Seed Symbol not exists");
             var seedOwnedSymbol = seedTokenInfo.ExternalInfo.Value[SymbolRegistrarContractConstants.SeedOwnedSymbolExternalInfoKey];
             var seedExpTime = long.Parse(seedTokenInfo.ExternalInfo.Value[SymbolRegistrarContractConstants.SeedExpireTimeExternalInfoKey]);
             Assert(!string.IsNullOrWhiteSpace(seedOwnedSymbol) && seedExpTime > Context.CurrentBlockTime.Seconds, "symbol seed not existed or expired");
-            Assert(input.BidFinishTime > seedExpTime && input.BidFinishTime < Context.CurrentBlockTime.Seconds, "bid finish time not correct");
             
             var specialSeed = State.SpecialSeedMap[seedOwnedSymbol];
             Assert(specialSeed != null, "Not Special seed " + input.SeedSymbol + " not support renew.");
