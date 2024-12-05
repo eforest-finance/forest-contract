@@ -383,7 +383,7 @@ namespace Forest.Contracts.SymbolRegistrar
         private void CheckSeedRenewRequestHash(string request, string hash)
         {
             var key = State.SeedRenewHashVerifyKey.Value;
-            Assert(!string.IsNullOrEmpty(key), "Need SetTreePointsHashVerifyKey");
+            Assert(!string.IsNullOrEmpty(key), "Need Set SeedRenewHashVerifyKey");
             var requestHash = HashHelper.ComputeFrom(string.Concat(request, key));
             Assert(hash.Equals(requestHash.ToHex()), "Unverified requests");
         }
