@@ -16,6 +16,8 @@ public class SymbolRegistrarContractConstants
     public const int MaxAddSpecialSeedCount = 500;
     public const int MaxSymbolLength = 30;
     public const string SeedPrefix = "SEED-";
+    public const string SeedPrefixPart = "SEED";
+
     public const int MaxCycleCount = 30;
     public const string CollectionSymbolSuffix = "0";
     public const string SeedOwnedSymbolExternalInfoKey = "__seed_owned_symbol";
