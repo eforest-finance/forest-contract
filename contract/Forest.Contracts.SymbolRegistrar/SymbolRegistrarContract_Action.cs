@@ -299,12 +299,13 @@ namespace Forest.Contracts.SymbolRegistrar
             
             var specialSeed = State.SpecialSeedMap[seedOwnedSymbol];
             Assert(specialSeed != null, "Not Special seed " + input.SeedSymbol + " not support renew.");
-            var requestStr = string.Concat(input.Buyer.ToBase58(), input.SeedSymbol);
-            requestStr = string.Concat(requestStr, input.Price.Symbol, input.Price.Amount, input.OpTime);
+            var requestStr = string.Concat(input.Buyer.ToBase58(), input.SeedSymbol,input.Price.Symbol, input.Price.Amount);
+            requestStr = string.Concat(requestStr,input.OpTime);
             CheckSeedRenewRequestHash(requestStr, input.RequestHash);
             var lastAddTime = State.SeedRenewTimeMap[input.SeedSymbol];
             Assert(input.OpTime > lastAddTime, "Invalid param OpTime");
             State.SeedRenewTimeMap[input.SeedSymbol] = input.OpTime;
+            
             
             var price = input.Price;
             Assert(price != null, "Symbol price not exits");
