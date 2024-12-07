@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AElf.Contracts.MultiToken;
+using Google.Protobuf.WellKnownTypes;
 using Shouldly;
 using Xunit;
 
@@ -313,6 +314,35 @@ namespace Forest.Contracts.SymbolRegistrar
             res.ShouldNotBeNull();
             res.Message.ShouldContain("Symbol exists");
         }
-
+        
+        [Fact]
+        public async Task SeedRenew_Test ()
+        {
+            await Buy_success();
+            await User1SymbolRegistrarContractStub.RegularSeedRenew.SendAsync(new RegularSeedRenewInput()
+            {
+                SeedSymbol = "SEED-1",
+                Price = new Price()
+                {
+                    Symbol = "ELF",
+                    Amount = 4700000000
+                }
+            });
+        }
+        
+        [Fact]
+        public async Task BidSeedRenew_Test ()
+        {
+            await Buy_success();
+            await User1SymbolRegistrarContractStub.SetSeedRenewHashVerifyKey.SendAsync(new StringValue{Value = "1a2b3c"});
+            await User1SymbolRegistrarContractStub.BidFinishSeedRenew.SendAsync(new BidFinishSeedRenewInput()
+            {
+                SeedSymbol = "SEED-1",
+                BidFinishTime = DateTime.UtcNow.Second,
+                OpTime = DateTime.UtcNow.Second,
+                RequestHash = "1234"
+            });
+            
+        }
     }
 }

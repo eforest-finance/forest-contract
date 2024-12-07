@@ -515,5 +515,18 @@ namespace Forest.Contracts.SymbolRegistrar
 
 
         }
+        
+        [Fact]
+        public async Task SetSeedRenewHashVerifyKeyTests()
+        {
+            await InitializeContract();
+            var value = "1a2b3c";
+            await AdminSymbolRegistrarContractStub.SetSeedRenewHashVerifyKey.SendAsync(new StringValue()
+            {
+                Value = value
+            });
+            var result = AdminSymbolRegistrarContractStub.GetSeedRenewHashVerifyKey.CallAsync(new Empty());
+            result.Result.Value.ShouldBe(value);
+        }
     }
 }

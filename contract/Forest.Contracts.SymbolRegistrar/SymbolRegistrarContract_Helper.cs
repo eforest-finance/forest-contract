@@ -55,6 +55,16 @@ namespace Forest.Contracts.SymbolRegistrar
             }
         }
         
+        private void AssertSeedSymbolPattern(string symbol)
+        {
+            Assert(symbol.Length > 0 && symbol.Length <= SymbolRegistrarContractConstants.MaxSymbolLength,
+                "Invalid symbol length.");
+
+            var symbolPartition = symbol.Split(SymbolRegistrarContractConstants.NFTSymbolSeparator);
+            Assert(symbolPartition.Length == 2, "Invalid symbol.");
+            Assert(symbolPartition[0] == SymbolRegistrarContractConstants.SeedPrefixPart, "Invalid seed symbol prefix.");
+        }
+        
         private void AssertPriceListLength(PriceList priceList)
         {
             Assert(priceList?.Value?.Count == SymbolRegistrarContractConstants.MaxSymbolLength,
@@ -154,6 +164,16 @@ namespace Forest.Contracts.SymbolRegistrar
             Assert(collectionInfo.Symbol.Length < 1, "Symbol exists");
             var collectionSeed = State.SymbolSeedMap[collectionSymbol];
             Assert(string.IsNullOrWhiteSpace(collectionSeed) || State.SeedInfoMap[collectionSeed].ExpireTime < Context.CurrentBlockTime.Seconds, "symbol seed existed");
+        }
+        
+        private void CheckSeedBalanceExisted(string symbol)
+        {
+            var balance = State.TokenContract.GetBalance.Call(new GetBalanceInput
+            {
+                Symbol = symbol,
+                Owner = Context.Sender
+            });
+            Assert(balance.Balance == 1, $"you don't have enough {symbol}");
         }
     }
 }
