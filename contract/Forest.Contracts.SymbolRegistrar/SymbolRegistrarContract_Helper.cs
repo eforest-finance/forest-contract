@@ -63,11 +63,6 @@ namespace Forest.Contracts.SymbolRegistrar
             var symbolPartition = symbol.Split(SymbolRegistrarContractConstants.NFTSymbolSeparator);
             Assert(symbolPartition.Length == 2, "Invalid symbol.");
             Assert(symbolPartition[0] == SymbolRegistrarContractConstants.SeedPrefixPart, "Invalid seed symbol prefix.");
-            
-            foreach (var c in symbolPartition[1])
-            {
-                Assert(c >= '1' && c <= '9', "Invalid seed symbol suffix.");
-            }
         }
         
         private void AssertPriceListLength(PriceList priceList)
